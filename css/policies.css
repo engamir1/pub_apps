@@ -1,50 +1,5 @@
 /* Policies Page Styles */
 
-/* Warning Block */
-.warning-block {
-  background-color: #ffe4e6;
-  border: 3px solid var(--secondary);
-  border-radius: 12px;
-  padding: 30px;
-  margin-bottom: 50px;
-  box-shadow: var(--shadow-flat-sm);
-  position: relative;
-}
-
-.warning-block h3 {
-  color: var(--secondary-hover);
-  font-size: 1.4rem;
-  font-weight: 800;
-  margin-bottom: 15px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.warning-block p {
-  color: var(--text-dark);
-  font-size: 1rem;
-  line-height: 1.7;
-}
-
-.warning-list {
-  list-style: none;
-  margin-top: 15px;
-}
-
-.warning-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin-bottom: 10px;
-  font-weight: 700;
-  font-size: 0.95rem;
-}
-
-.warning-list li::before {
-  content: '⚠️';
-}
-
 /* Tabs Section */
 .policy-tabs {
   display: flex;
