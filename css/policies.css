@@ -1,0 +1,188 @@
+/* Policies Page Styles */
+
+/* Warning Block */
+.warning-block {
+  background-color: #ffe4e6;
+  border: 3px solid var(--secondary);
+  border-radius: 12px;
+  padding: 30px;
+  margin-bottom: 50px;
+  box-shadow: var(--shadow-flat-sm);
+  position: relative;
+}
+
+.warning-block h3 {
+  color: var(--secondary-hover);
+  font-size: 1.4rem;
+  font-weight: 800;
+  margin-bottom: 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.warning-block p {
+  color: var(--text-dark);
+  font-size: 1rem;
+  line-height: 1.7;
+}
+
+.warning-list {
+  list-style: none;
+  margin-top: 15px;
+}
+
+.warning-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.warning-list li::before {
+  content: '⚠️';
+}
+
+/* Tabs Section */
+.policy-tabs {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  font-weight: 700;
+  font-size: 1rem;
+  border: var(--border-main);
+  border-radius: 8px;
+  cursor: pointer;
+  background-color: var(--card-bg);
+  box-shadow: var(--shadow-flat-sm);
+  transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast), color var(--transition-fast);
+}
+
+.tab-btn.active {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.tab-btn:hover:not(.active) {
+  background-color: #f1f5f9;
+}
+
+.policy-content-panel {
+  display: none;
+}
+
+.policy-content-panel.active {
+  display: block;
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Compliance Guide Card */
+.compliance-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 15px;
+}
+
+.compliance-icon {
+  font-size: 2.2rem;
+}
+
+.policy-details-list {
+  list-style: none;
+  margin-top: 20px;
+}
+
+.policy-details-list li {
+  margin-bottom: 20px;
+}
+
+.policy-details-list h4 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text-dark);
+}
+
+.policy-details-list p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+}
+
+/* Checklist section */
+.checklist-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+}
+
+.checklist-card {
+  height: 100%;
+}
+
+.checklist-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.check-item-list {
+  list-style: none;
+}
+
+.check-item-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 15px;
+  font-size: 0.95rem;
+}
+
+.check-badge {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  box-shadow: 1px 1px 0px var(--border-color);
+}
+
+.check-badge.yes { background-color: #d1fae5; color: var(--accent-green); border-color: var(--accent-green); }
+.check-badge.no { background-color: #ffe4e6; color: var(--secondary); border-color: var(--secondary); }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .policy-tabs {
+    flex-direction: column;
+    gap: 10px;
+  }
+  .tab-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .checklist-container {
+    grid-template-columns: 1fr;
+  }
+}

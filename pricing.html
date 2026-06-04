@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>باقات الأسعار | انشر تطبيقك</title>
+  <meta name="description" content="تصفح باقات أسعار خدمة نشر التطبيقات على متجر جوجل بلاي. باقات تناسب الحسابات الشخصية الجديدة (مع شرط 20 مختبراً) والحسابات القديمة أو حسابات الشركات.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/pricing.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">🚀</div>
+        <span>انشر تطبيقك</span>
+      </a>
+      
+      <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">☰</button>
+      
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">الرئيسية</a>
+        <a href="pricing.html" class="nav-link">باقات الأسعار</a>
+        <a href="policies.html" class="nav-link">سياسات النشر</a>
+        <a href="order.html" class="btn btn-primary nav-btn">اطلب الخدمة الآن</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Title Section -->
+  <section class="section" style="padding: 60px 0 30px; border-bottom: none;">
+    <div class="container text-center">
+      <span class="badge badge-accent section-tag">باقات مرنة ومناسبة</span>
+      <h1 class="section-title" style="font-size: 3rem; margin-top: 10px;">اختر الخطة المناسبة لتطبيقك</h1>
+      <p style="color: var(--text-light); max-width: 600px; margin: 15px auto 0; font-size: 1.1rem;">
+        باقات الأسعار تناسب تماماً حساب المطور الخاص بك (حساب شخصي قديم أو مؤسسة لا يتطلب شروطاً إضافية)، مع إتاحة خيار توفير المختبرين للحسابات الشخصية الجديدة عند الطلب.
+      </p>
+    </div>
+  </section>
+
+  <!-- Interactive Pricing Section -->
+  <section class="section" style="padding-top: 10px;">
+    <div class="container">
+      <!-- Info Banner about Cedra Tech -->
+      <div class="warning-block" style="background-color: #eef2ff; border-color: var(--primary); margin-bottom: 45px; text-align: center;">
+        <h3 style="color: var(--primary-hover); justify-content: center;">🌐 النشر الموحد على حسابنا الرسمي المعتمد</h3>
+        <p style="font-size: 1.05rem; font-weight: 700; margin-top: 10px;">
+          يتم نشر جميع التطبيقات في باقة (الاحترافية) وباقة (VIP) على حساب المطور الرسمي والنشط الخاص بنا: 
+          <a href="https://play.google.com/store/apps/developer?id=Cedra+Tech" target="_blank" style="color: var(--secondary); text-decoration: underline;">Cedra Tech على متجر جوجل بلاي</a>.
+          يضمن هذا النشر المباشر والسريع دون الحاجة لمختبرين أو فترات انتظار طويلة، مع إمكانية تحويل ملكية التطبيق لحسابك الخاص لاحقاً.
+        </p>
+      </div>
+
+      <!-- Pricing Cards Grid -->
+      <div class="pricing-grid">
+        <!-- Plan 1: Starter -->
+        <div class="card pricing-card" id="cardStarter">
+          <div class="pricing-header">
+            <h3 class="plan-name" style="color: var(--primary);">خطة الانطلاق</h3>
+            <div class="plan-price-box">
+              <span class="plan-price" id="priceStarter">500</span>
+              <span class="plan-currency">ج.م</span>
+            </div>
+            <p class="plan-desc">لتجهيز الميتا داتا والأصول الفنية وتهيئة الـ ASO ليقوم المطور بالرفع بنفسه.</p>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="feature-check">✓</span> كتابة وصف التطبيق الطويل والقصير</li>
+            <li><span class="feature-check">✓</span> تهيئة الكلمات المفتاحية وعناوين الترويج</li>
+            <li><span class="feature-check">✓</span> تصميم أيقونة التطبيق (512x512)</li>
+            <li><span class="feature-check">✓</span> تصميم الصورة المميزة (1024x500)</li>
+            <li><span class="feature-check">✓</span> تجهيز لقطات الشاشة (حتى 6 صور)</li>
+            <li><span class="feature-check">✓</span> التحديثات اللاحقة تبدأ من 3$ (150 ج.م) للمرة</li>
+            <li><span class="feature-cross">✗</span> الرفع الفعلي على حساب متجر جوجل</li>
+            <li><span class="feature-cross">✗</span> دعم فني ما بعد النشر</li>
+          </ul>
+          <a href="order.html?plan=starter" id="linkStarter" class="btn btn-primary">اطلب باقة الانطلاق</a>
+        </div>
+
+        <!-- Plan 2: Publisher Pro -->
+        <div class="card pricing-card popular" id="cardPro">
+          <span class="popular-badge">الأكثر طلباً ⭐</span>
+          <div class="pricing-header">
+            <h3 class="plan-name" style="color: var(--secondary);">النشر الاحترافية</h3>
+            <div class="plan-price-box">
+              <span class="plan-price" id="pricePro">1200</span>
+              <span class="plan-currency">ج.م</span>
+            </div>
+            <p class="plan-desc">النشر الكامل والتأكد الفني الكامل من ملفات التطبيق والسياسات حتى القبول.</p>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="feature-check">✓</span> جميع مميزات باقة الانطلاق (ASO + أصول)</li>
+            <li><span class="feature-check">✓</span> رفع ملف الـ AAB على حسابنا المعتمد <strong style="color: var(--secondary);">Cedra Tech</strong></li>
+            <li><span class="feature-check">✓</span> صياغة أمان البيانات (Data Safety)</li>
+            <li><span class="feature-check">✓</span> إنشاء سياسة الخصوصية واستضافتها مجاناً</li>
+            <li><span class="feature-check">✓</span> فحص الامتثال وحل تنبيهات السياسة</li>
+            <li><span class="feature-check">✓</span> التحديثات اللاحقة تبدأ من 3$ (150 ج.م) للمرة</li>
+            <li><span class="feature-check">✓</span> متابعة التطبيق حتى المراجعة والقبول</li>
+          </ul>
+          <a href="order.html?plan=pro" id="linkPro" class="btn btn-secondary">اطلب الباقة الاحترافية</a>
+        </div>
+
+        <!-- Plan 3: Premium VIP -->
+        <div class="card pricing-card" id="cardVIP">
+          <div class="pricing-header">
+            <h3 class="plan-name" style="color: var(--accent-green-hover);">الكاملة (VIP)</h3>
+            <div class="plan-price-box">
+              <span class="plan-price" id="priceVIP">2500</span>
+              <span class="plan-currency">ج.م</span>
+            </div>
+            <p class="plan-desc">الحل الشامل للنشر وإدارة التطبيق بالكامل مع دعم التحديثات وحل المشكلات الفنية.</p>
+          </div>
+          <ul class="pricing-features">
+            <li><span class="feature-check">✓</span> جميع مميزات باقة النشر الاحترافية</li>
+            <li><span class="feature-check">✓</span> الرفع على حسابنا المعتمد <strong style="color: var(--accent-green-hover);">Cedra Tech</strong></li>
+            <li><span class="feature-check">✓</span> نقل ملكية التطبيق قانونياً لحسابك الخاص لاحقاً (مشمول)</li>
+            <li><span class="feature-check">✓</span> ضمان اجتياز الفحص الفني والامتثال للسياسات</li>
+            <li><span class="feature-check">✓</span> دعم فني فوري لحل مشاكل الانهيارات (ANR)</li>
+            <li><span class="feature-check">✓</span> تحديثين مجانيين بالكامل خلال أول 3 أشهر</li>
+            <li><span class="feature-check">✓</span> التحديثات الإضافية تبدأ من 3$ (150 ج.م) للمرة</li>
+            <li><span class="feature-check">✓</span> تهيئة الإعلانات (AdMob) واستشارات تسويقية مجانية</li>
+          </ul>
+          <a href="order.html?plan=vip" id="linkVIP" class="btn btn-success">اطلب باقة VIP الشاملة</a>
+        </div>
+      </div>
+
+      <!-- Feature Comparison Table -->
+      <div class="comparison-section">
+        <div class="section-header" style="margin-bottom: 40px;">
+          <h2 class="section-title" style="font-size: 2rem;">مقارنة تفصيلية بين الباقات</h2>
+        </div>
+        
+        <div class="table-responsive">
+          <table class="comparison-table">
+            <thead>
+              <tr>
+                <th>الميزة / الخدمة</th>
+                <th class="text-center">خطة الانطلاق</th>
+                <th class="text-center">النشر الاحترافية</th>
+                <th class="text-center">الكاملة (VIP)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>إعداد الميتا داتا والوصف (ASO)</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ أساسي</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ متقدم (ثنائي اللغة)</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ متقدم + فحص كلمات مفتاحية منافسة</td>
+              </tr>
+              <tr>
+                <td>تصميم لقطات الشاشة والأيقونة</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ حتى 6 لقطات</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ حتى 10 لقطات + متوافقة مع التابلت</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ لقطات غير محدودة + تصميم واجهة مميزة إضافية</td>
+              </tr>
+              <tr>
+                <td>كتابة وصياغة سياسة الخصوصية</td>
+                <td class="text-center" style="color: var(--secondary);">✗ غير مشمول</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ مشمول واستضافة مجانية لها</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ مشمول واستضافة مجانية مدى الحياة</td>
+              </tr>
+              <tr>
+                <td>تهيئة نموذج أمان البيانات وموافقة المستخدمين</td>
+                <td class="text-center" style="color: var(--secondary);">✗ غير مشمول</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ تهيئة قياسية</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ تهيئة متكاملة مع إعدادات حظر البيانات الحساسة</td>
+              </tr>
+              <tr>
+                <td>رفع التطبيق وإدارته على الكونسول</td>
+                <td class="text-center" style="color: var(--secondary);">✗ غير مشمول</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ رفع وتهيئة كاملة</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ رفع وتنسيق مسارات متعددة (إنتاج/بيتا)</td>
+              </tr>
+              <tr>
+                <td>توفير 20 مختبراً (14 يوماً)</td>
+                <td class="text-center" style="color: var(--secondary);">✗ غير مشمول</td>
+                <td class="text-center" id="tdProTester">✗ يتطلب ترقية للباقة كاملة</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ متوفر لـ 14 يوماً مع تقارير يومية</td>
+              </tr>
+              <tr>
+                <td>الدعم والتحديثات الفنية للنسخ اللاحقة</td>
+                <td class="text-center" style="color: var(--secondary);">✗ غير مشمول</td>
+                <td class="text-center" style="color: var(--secondary);">✗ متوفر كخدمة إضافية</td>
+                <td class="text-center" style="color: var(--accent-green);">✓ دعم مجاني لـ 3 أشهر + تحديثين مجانيين</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- FAQ Section -->
+      <div>
+        <div class="section-header" style="margin-bottom: 45px;">
+          <span class="badge badge-accent section-tag">أسئلة شائعة</span>
+          <h2 class="section-title" style="font-size: 2rem;">كل ما تحتاج لمعرفته عن الأسعار والنشر</h2>
+        </div>
+        
+        <div class="faqs-grid">
+          <div class="card faq-card">
+            <h3>كيف يختلف السعر بناءً على شرط الـ 20 مختبراً؟</h3>
+            <p>الأسعار المعروضة تفترض أن حساب المطور الخاص بك لا يحتاج إلى مختبرين (شخصي قديم أو مؤسسة). في حال كان حسابك شخصياً جديداً يتطلب 20 مختبراً لمدة 14 يوماً، نقوم بتوفير المختبرين وتفعيل الحساب بتكلفة إضافية تغطي إدارة عملية الاختبار بالكامل، وتضاف عند تفعيل الخيار المقابل.</p>
+          </div>
+
+          <div class="card faq-card">
+            <h3>ماذا لو تم رفض تطبيقي من قبل جوجل؟</h3>
+            <p>نحن نضمن مراجعة التطبيق وتوافقه مع السياسات قبل رفعه. في حال تم رفض التطبيق بسبب مشاكل في السياسات أو الصور أو الميتا داتا، نقوم بالتعديل وإعادة التقديم مجاناً تماماً حتى يتم القبول الفعلي.</p>
+          </div>
+
+          <div class="card faq-card">
+            <h3>كيف تتم عملية الاتفاق والدفع؟</h3>
+            <p>تبدأ العملية باختيار باقتك وتعبئة تفاصيل تطبيقك في نموذج الطلب، فور إرسال الطلب سيتم توليد رسالة واتساب متكاملة تحتوي على كافة تفاصيل طلبك لترسلها لنا. سنتفق معك على كافة التفاصيل وندقق التطبيق، ثم يتم تحويل المبلغ المتفق عليه عبر خدمة InstaPay للبدء بالعمل فوراً.</p>
+          </div>
+
+          <div class="card faq-card">
+            <h3>هل تنشرون تطبيقات الـ WebView أو التطبيقات المخالفة؟</h3>
+            <p>لا، نحن ملتزمون التزاماً صارماً بسياسات مطوري جوجل بلاي. نرفض تماماً نشر التطبيقات الضارة، التطبيقات المنسوخة، وتطبيقات الـ WebView البسيطة التي لا تحتوي على قيمة مضافة حقيقية للمستخدم، لأنها تسبب إغلاق حساب المطور وحظر حساباتنا أيضاً.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-about">
+        <a href="index.html" class="logo" style="color: white; margin-bottom: 15px;">
+          <div class="logo-icon" style="background-color: var(--secondary);">🚀</div>
+          <span>انشر تطبيقك</span>
+        </a>
+        <p>المنصة الرائدة والآمنة لمساعدة المطورين والشركات الناشئة في نشر وتجهيز تطبيقاتهم للهواتف الذكية على متجر جوجل بلاي والالتزام بالسياسات.</p>
+      </div>
+      
+      <div class="footer-col">
+        <h3>روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="pricing.html">باقات الأسعار</a></li>
+          <li><a href="policies.html">سياسات النشر</a></li>
+          <li><a href="order.html">اطلب الخدمة</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>السياسات والامتثال</h3>
+        <ul class="footer-links">
+          <li><a href="policies.html#webview-policy">سياسة WebView</a></li>
+          <li><a href="policies.html#testing-policy">شروط الاختبار المغلق</a></li>
+          <li><a href="policies.html#data-safety">أمان البيانات</a></li>
+          <li><a href="policies.html#terms">الشروط والأحكام</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>تواصل معنا</h3>
+        <ul class="footer-contact">
+          <li>💬 واتساب: <a href="https://wa.me/201507890092" target="_blank">01507890092</a></li>
+          <li>📧 البريد: <a href="mailto:cedratech1@gmail.com">cedratech1@gmail.com</a></li>
+          <li>📍 مصر - CedraTech Inc.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <p>© 2026 منصة انشر تطبيقك. جميع الحقوق محفوظة لشركة CedraTech.</p>
+      <div class="social-links">
+        <a href="https://wa.me/201507890092" class="social-btn" target="_blank">💬</a>
+        <a href="mailto:cedratech1@gmail.com" class="social-btn">📧</a>
+        <a href="https://ipn.eg/S/eng_amir/instapay/2ERpU3" class="social-btn" target="_blank" title="دفع عبر انستا باي">💸</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

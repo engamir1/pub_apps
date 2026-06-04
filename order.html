@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تقديم طلب نشر تطبيق | انشر تطبيقك</title>
+  <meta name="description" content="قم بتعبئة متطلبات نشر تطبيقك على متجر جوجل بلاي. اختر الباقة، أدخل الميتا داتا، ارفع الأصول والملفات، واستكمل النشر بسهولة وأمان.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/order.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">🚀</div>
+        <span>انشر تطبيقك</span>
+      </a>
+      
+      <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">☰</button>
+      
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">الرئيسية</a>
+        <a href="pricing.html" class="nav-link">باقات الأسعار</a>
+        <a href="policies.html" class="nav-link">سياسات النشر</a>
+        <a href="order.html" class="btn btn-primary nav-btn">اطلب الخدمة الآن</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Order Page Wrapper -->
+  <div class="container">
+    <div class="order-container card">
+      
+      <!-- Progress Bar -->
+      <div class="wizard-progress" id="wizardProgress">
+        <div class="progress-line" id="progressLine"></div>
+        <div class="progress-step active" data-step="1">
+          ١
+          <span class="step-label">الخطة والحساب</span>
+        </div>
+        <div class="progress-step" data-step="2">
+          ٢
+          <span class="step-label">بيانات التطبيق</span>
+        </div>
+        <div class="progress-step" data-step="3">
+          ٣
+          <span class="step-label">الملفات والأصول</span>
+        </div>
+        <div class="progress-step" data-step="4">
+          ٤
+          <span class="step-label">السياسات والتعهد</span>
+        </div>
+        <div class="progress-step" data-step="5">
+          ٥
+          <span class="step-label">المراجعة والدفع</span>
+        </div>
+      </div>
+
+      <!-- Form Wrapper -->
+      <form id="orderForm" onsubmit="return false;">
+        
+        <!-- STEP 1: Plan & Account -->
+        <div class="wizard-step-panel active" data-step="1">
+          <h2 class="step-title">الخطة وبيانات الاتصال</h2>
+          
+          <!-- Plan Selection Radio Cards -->
+          <div class="form-group">
+            <label class="required">اختر باقة الخدمة:</label>
+            <div class="radio-group">
+              <div class="radio-option">
+                <input type="radio" name="planSelection" value="starter" checked>
+                <div class="radio-label-box">
+                  <span class="radio-label-title" style="color: var(--primary);">خطة الانطلاق</span>
+                  <span class="radio-label-desc" id="lblPriceStarter">500 ج.م</span>
+                </div>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="planSelection" value="pro">
+                <div class="radio-label-box">
+                  <span class="radio-label-title" style="color: var(--secondary);">النشر الاحترافية</span>
+                  <span class="radio-label-desc" id="lblPricePro">1200 ج.م</span>
+                </div>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="planSelection" value="vip">
+                <div class="radio-label-box">
+                  <span class="radio-label-title" style="color: var(--accent-green-hover);">الكاملة (VIP)</span>
+                  <span class="radio-label-desc" id="lblPriceVIP">2500 ج.م</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Account Information Info Block -->
+          <div class="form-group">
+            <div class="warning-block" style="background-color: #eef2ff; border-color: var(--primary); padding: 15px; margin-bottom: 0; box-shadow: none;">
+              <strong style="color: var(--primary-hover); font-size: 1rem; display: block; margin-bottom: 5px;">🌐 حساب النشر المعتمد:</strong>
+              <p style="font-size: 0.9rem; font-weight: 600; line-height: 1.5; color: var(--text-dark);">
+                سيتم رفع تطبيقك ونشره على حساب المطور الرسمي والنشط الخاص بنا:
+                <a href="https://play.google.com/store/apps/developer?id=Cedra+Tech" target="_blank" style="color: var(--secondary); text-decoration: underline; font-weight: 800;">Cedra Tech</a>.
+                (هذا الخيار يتخطى شرط الـ 20 مختبراً)، مع إتاحة خيار نقل ملكية التطبيق قانونياً لحسابك الشخصي لاحقاً.
+              </p>
+            </div>
+          </div>
+
+          <!-- Developer Info -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="devName" class="required">اسم المطور / العميل:</label>
+              <input type="text" id="devName" class="form-control" placeholder="أدخل اسمك الكامل" required>
+            </div>
+            <div class="form-group">
+              <label for="devPhone" class="required">رقم الواتساب (للتواصل):</label>
+              <input type="tel" id="devPhone" class="form-control" placeholder="مثال: 01507890092" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="devEmail" class="required">البريد الإلكتروني للعميل:</label>
+            <input type="email" id="devEmail" class="form-control" placeholder="name@example.com" required>
+            <span class="form-helper">سنقوم بإرسال نسخة من الفواتير والسياسات المجهزة على هذا البريد.</span>
+          </div>
+        </div>
+
+        <!-- STEP 2: App Metadata -->
+        <div class="wizard-step-panel" data-step="2">
+          <h2 class="step-title">تفاصيل وبيانات التطبيق (ASO)</h2>
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appTitle" class="required">اسم التطبيق المقترح (بالعربية أو الإنجليزية):</label>
+              <input type="text" id="appTitle" class="form-control" placeholder="مثال: تطبيق توصيل الطلبات" required>
+              <span class="form-helper">الحد الأقصى لاسم التطبيق في متجر جوجل هو 30 حرفاً.</span>
+            </div>
+            <div class="form-group">
+              <label for="appCategory" class="required">تصنيف التطبيق الأساسي:</label>
+              <select id="appCategory" class="form-control" required>
+                <option value="" disabled selected>اختر التصنيف...</option>
+                <option value="business">أعمال وإنتاجية (Business)</option>
+                <option value="shopping">تسوق وتجارة إلكترونية (Shopping)</option>
+                <option value="education">تعليمي وتثقيفي (Education)</option>
+                <option value="health">صحة ورياضة (Health & Fitness)</option>
+                <option value="entertainment">ترفيه وألعاب (Entertainment & Games)</option>
+                <option value="tools">أدوات وخدمات (Tools)</option>
+                <option value="other">تصنيف آخر</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="appShortDesc" class="required">الوصف القصير للتطبيق (Short Description):</label>
+            <input type="text" id="appShortDesc" class="form-control" placeholder="اكتب جملاً ترويجية شيقة للتطبيق" maxlength="80" required>
+            <span class="form-helper">الحد الأقصى 80 حرفاً. سيعرض للمستخدم في شاشة البحث السريع.</span>
+          </div>
+
+          <div class="form-group">
+            <label for="appLongDesc" class="required">الوصف الطويل والمفصل (Full Description):</label>
+            <textarea id="appLongDesc" class="form-control" placeholder="اشرح مميزات التطبيق، كيفية الاستخدام، الفائدة للمستخدمين بالتفصيل..." maxlength="4000" required></textarea>
+            <span class="form-helper">الحد الأقصى 4000 حرف. يفضل أن يحتوي على الكلمات المفتاحية الأكثر بحثاً.</span>
+          </div>
+        </div>
+
+        <!-- STEP 3: Files & Assets -->
+        <div class="wizard-step-panel" data-step="3">
+          <h2 class="step-title">أصول وملفات التطبيق</h2>
+          <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.9rem;">
+            إذا لم تكن تملك أصولاً جاهزة (أيقونات أو لقطات شاشة)، فلا تقلق! باقتنا تشمل تصميمها بالكامل. يمكنك تجاوز الرفع في حال عدم توفرها وسنقوم نحن بالمهمة.
+          </p>
+
+          <div class="form-row">
+            <!-- App Icon Upload -->
+            <div class="form-group">
+              <label>أيقونة التطبيق (موصى بها: 512x512 بكسل):</label>
+              <div class="file-dropzone" id="dropzoneIcon">
+                <div class="dropzone-icon">🎨</div>
+                <div class="dropzone-text">اسحب وأسقط أيقونة التطبيق هنا</div>
+                <div class="dropzone-subtext">أو انقر للاختيار (PNG, JPG)</div>
+                <input type="file" id="fileIcon" class="file-input-hidden" accept="image/png, image/jpeg">
+              </div>
+              <div class="preview-container" id="previewIconContainer"></div>
+            </div>
+
+            <!-- Feature Graphic Upload -->
+            <div class="form-group">
+              <label>الصورة المميزة (موصى بها: 1024x500 بكسل):</label>
+              <div class="file-dropzone" id="dropzoneFeature">
+                <div class="dropzone-icon">🖼️</div>
+                <div class="dropzone-text">اسحب وأسقط الصورة المميزة هنا</div>
+                <div class="dropzone-subtext">أو انقر للاختيار (PNG, JPG)</div>
+                <input type="file" id="fileFeature" class="file-input-hidden" accept="image/png, image/jpeg">
+              </div>
+              <div class="preview-container" id="previewFeatureContainer"></div>
+            </div>
+          </div>
+
+          <!-- Screenshots Multiple Upload -->
+          <div class="form-group">
+            <label>صور لقطات الشاشة (Screenshots) (حتى 8 لقطات):</label>
+            <div class="file-dropzone" id="dropzoneScreenshots">
+              <div class="dropzone-icon">📱</div>
+              <div class="dropzone-text">اسحب وأسقط لقطات شاشة التطبيق هنا</div>
+              <div class="dropzone-subtext">يمكنك تحديد ملفات متعددة معاً (PNG, JPG)</div>
+              <input type="file" id="fileScreenshots" class="file-input-hidden" accept="image/png, image/jpeg" multiple>
+            </div>
+            <div class="preview-container" id="previewScreenshotsContainer"></div>
+          </div>
+
+          <!-- AAB File Upload -->
+          <div class="form-group">
+            <label class="required">ملف التطبيق بصيغة Android App Bundle (AAB):</label>
+            <div class="file-dropzone" id="dropzoneAAB">
+              <div class="dropzone-icon">⚙️</div>
+              <div class="dropzone-text" id="txtAabDropzone">اسحب وأسقط ملف التطبيق (.aab) هنا</div>
+              <div class="dropzone-subtext">أو انقر للاختيار من جهازك (الحد الأقصى: 200MB)</div>
+              <input type="file" id="fileAAB" class="file-input-hidden" accept=".aab" required>
+            </div>
+            <div class="preview-container" id="previewAabContainer"></div>
+          </div>
+        </div>
+
+        <!-- STEP 4: Policy & Verification Pledge -->
+        <div class="wizard-step-panel" data-step="4">
+          <h2 class="step-title">التعهد والالتزام بسياسات منصة جوجل</h2>
+          
+          <div class="warning-block" style="border-color: var(--accent-yellow); background-color: #fffbeb; margin-bottom: 25px; padding: 20px;">
+            <h3 style="color: #b45309;">⚠️ إقرار هام حول أمان وحقوق التطبيق</h3>
+            <p style="font-size: 0.95rem; font-weight: 600;">
+              يتعرض المطورون أحياناً لحظر حساباتهم بالكامل بسبب الجهل بسياسات النشر أو محاولة الالتفاف عليها. لذا، يتطلب البدء بالخدمة مراجعتك وإقرارك بالتالي للتأكد من عدم مخالفة اللوائح:
+            </p>
+          </div>
+
+          <div class="compliance-checklist-box">
+            <!-- Declaration 1 -->
+            <label class="compliance-check-item">
+              <input type="checkbox" id="pledgeWebView" required>
+              <div class="compliance-check-text">
+                أقر بأن هذا التطبيق ليس WebView بسيط لموقع خارجي.
+                <span>التطبيق يحتوي على واجهة مستخدم أصلية ومزايا تفاعلية للهاتف ولا يقتصر على فتح صفحة الويب فقط (مخالفة سياسة Minimum Functionality لـ Google).</span>
+              </div>
+            </label>
+
+            <!-- Declaration 2 -->
+            <label class="compliance-check-item">
+              <input type="checkbox" id="pledgeCopyright" required>
+              <div class="compliance-check-text">
+                أتعهد بخلو التطبيق من انتهاكات الملكية الفكرية أو المحتوى المقرصن.
+                <span>التطبيق لا يحتوي على بث غير مصرح به، أو علامات تجارية مزيفة، أو محتوى ينتهك حقوق النشر الخاصة بالجهات والشركات الأخرى.</span>
+              </div>
+            </label>
+
+            <!-- Declaration 3 -->
+            <label class="compliance-check-item">
+              <input type="checkbox" id="pledgeMalware" required>
+              <div class="compliance-check-text">
+                أضمن خلو التطبيق من الأكواد الضارة أو طلب صلاحيات مشبوهة.
+                <span>التطبيق آمن بالكامل ولا يهدف إلى سرقة بيانات المستخدمين أو التجسس عليهم أو مخالفة سياسات جمع البيانات الحساسة.</span>
+              </div>
+            </label>
+
+            <!-- Declaration 4 -->
+            <label class="compliance-check-item">
+              <input type="checkbox" id="pledgePrivacy" required>
+              <div class="compliance-check-text">
+                الموافقة على سياسة أمان البيانات وإنشاء رابط الخصوصية.
+                <span>أوافق على قيام المنصة بإنشاء رابط استضافة لسياسة الخصوصية وتعبئة استبيان أمان البيانات (Data Safety) بناءً على المدخلات المقدمة.</span>
+              </div>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="privacyLink">رابط سياسة الخصوصية الحالي (اختياري - إذا توفر):</label>
+            <input type="url" id="privacyLink" class="form-control" placeholder="https://yourwebsite.com/privacy-policy">
+            <span class="form-helper">اتركه فارغاً وسنقوم بإنشاء واستضافة سياسة خصوصية احترافية مجانية لتطبيقك.</span>
+          </div>
+        </div>
+
+        <!-- STEP 5: Review & Send -->
+        <div class="wizard-step-panel" data-step="5">
+          <h2 class="step-title">المراجعة والاتفاق على الدفع</h2>
+          
+          <!-- Summary Box -->
+          <div class="summary-section">
+            <h3 style="font-size: 1.15rem; font-weight: 800; margin-bottom: 15px;">ملخص الطلب:</h3>
+            <div class="summary-row">
+              <span class="summary-label">اسم العميل:</span>
+              <span class="summary-value" id="sumDevName">-</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">الباقة المطلوبة:</span>
+              <span class="summary-value" id="sumPlanName">-</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">حساب النشر على المتجر:</span>
+              <span class="summary-value" id="sumAccountType">-</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">اسم التطبيق:</span>
+              <span class="summary-value" id="sumAppTitle">-</span>
+            </div>
+            <div class="summary-row">
+              <span class="summary-label">تصنيف التطبيق:</span>
+              <span class="summary-value" id="sumAppCategory">-</span>
+            </div>
+            <div class="summary-row" style="border-bottom: none; padding-top: 15px;">
+              <span class="summary-label" style="font-size: 1.2rem; color: var(--text-dark);">إجمالي التكلفة المتوقعة:</span>
+              <span class="summary-value" id="sumTotalPrice" style="font-size: 1.5rem; color: var(--secondary);">-</span>
+            </div>
+          </div>
+
+          <!-- InstaPay Box -->
+          <div class="instapay-box">
+            <div class="instapay-title">💸 الدفع عبر InstaPay مصر</div>
+            <p class="instapay-instructions">
+              تبدأ خطتنا بالاتفاق الكامل ومراجعة تطبيقك أولاً لضمان القبول. بعد تأكيد المراجعة، يتم دفع الفاتورة للبدء بالعمل والرفع مباشرة:
+            </p>
+            <div class="instapay-details">
+              <strong>العنوان الرقمي للتحويل:</strong> <code style="font-size: 1.1rem; color: var(--secondary);">eng_amir/instapay</code>
+            </div>
+            <div>
+              <a href="https://ipn.eg/S/eng_amir/instapay/2ERpU3" target="_blank" class="instapay-link-btn">
+                انتقل للدفع السريع عبر رابط InstaPay ➔
+              </a>
+            </div>
+          </div>
+
+          <p style="text-align: center; font-weight: 700; color: var(--text-light); margin-bottom: 20px;">
+            يرجى تأكيد إرسال الطلب عبر إحدى القنوات لتسجيله ومراجعة الملفات فوراً:
+          </p>
+        </div>
+
+        <!-- Success Screen (Replaces form actions upon dispatch) -->
+        <div class="success-card" id="successPanel" style="display: none;">
+          <div class="success-icon">✓</div>
+          <h2>تم تجهيز وحفظ بيانات الطلب بنجاح!</h2>
+          <p>
+            يرجى إرسال تفاصيل الطلب والملفات المرفوعة إلى فريق الدعم الفني عبر **واتساب** أو **البريد الإلكتروني** لبدء مراجعة السياسات والاتفاق الفوري:
+          </p>
+          
+          <div class="submit-options">
+            <a href="#" id="btnSendWhatsapp" target="_blank" class="btn whatsapp-submit-btn">
+              💬 إرسال الطلب وتفاصيل الملفات عبر واتساب
+            </a>
+            <a href="#" id="btnSendEmail" class="btn email-submit-btn">
+              📧 إرسال الطلب والتفاصيل عبر البريد الإلكتروني
+            </a>
+            <a href="index.html" class="btn" style="border-color: #cbd5e1; box-shadow: none;">العودة للرئيسية</a>
+          </div>
+        </div>
+
+        <!-- Wizard Navigation Buttons -->
+        <div class="wizard-footer" id="wizardFooter">
+          <button type="button" class="btn" id="btnPrev" style="visibility: hidden;">السابق</button>
+          <button type="button" class="btn btn-primary" id="btnNext">التالي</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-about">
+        <a href="index.html" class="logo" style="color: white; margin-bottom: 15px;">
+          <div class="logo-icon" style="background-color: var(--secondary);">🚀</div>
+          <span>انشر تطبيقك</span>
+        </a>
+        <p>المنصة الرائدة والآمنة لمساعدة المطورين والشركات الناشئة في نشر وتجهيز تطبيقاتهم للهواتف الذكية على متجر جوجل بلاي والالتزام بالسياسات.</p>
+      </div>
+      
+      <div class="footer-col">
+        <h3>روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="pricing.html">باقات الأسعار</a></li>
+          <li><a href="policies.html">سياسات النشر</a></li>
+          <li><a href="order.html">اطلب الخدمة</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>السياسات والامتثال</h3>
+        <ul class="footer-links">
+          <li><a href="policies.html#webview-policy">سياسة WebView</a></li>
+          <li><a href="policies.html#testing-policy">شروط الاختبار المغلق</a></li>
+          <li><a href="policies.html#data-safety">أمان البيانات</a></li>
+          <li><a href="policies.html#terms">الشروط والأحكام</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>تواصل معنا</h3>
+        <ul class="footer-contact">
+          <li>💬 واتساب: <a href="https://wa.me/201507890092" target="_blank">01507890092</a></li>
+          <li>📧 البريد: <a href="mailto:cedratech1@gmail.com">cedratech1@gmail.com</a></li>
+          <li>📍 مصر - CedraTech Inc.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <p>© 2026 منصة انشر تطبيقك. جميع الحقوق محفوظة لشركة CedraTech.</p>
+      <div class="social-links">
+        <a href="https://wa.me/201507890092" class="social-btn" target="_blank">💬</a>
+        <a href="mailto:cedratech1@gmail.com" class="social-btn">📧</a>
+        <a href="https://ipn.eg/S/eng_amir/instapay/2ERpU3" class="social-btn" target="_blank" title="دفع عبر انستا باي">💸</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script src="js/order.js"></script>
+</body>
+</html>

@@ -1,0 +1,367 @@
+/* Home Page Styles */
+
+/* Hero Section */
+.hero {
+  padding: 80px 0;
+  display: flex;
+  align-items: center;
+  min-height: calc(100vh - var(--header-height));
+  position: relative;
+  overflow: hidden;
+  background-color: var(--bg-color);
+  border-bottom: var(--border-main);
+}
+
+.hero-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+
+.hero-content h1 {
+  font-size: 3.8rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--text-dark);
+  margin-bottom: 20px;
+}
+
+.hero-content h1 span {
+  color: var(--primary);
+  position: relative;
+  display: inline-block;
+}
+
+.hero-content h1 span::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  right: 0;
+  width: 100%;
+  height: 12px;
+  background-color: var(--accent-yellow);
+  z-index: -1;
+}
+
+.hero-content p {
+  font-size: 1.25rem;
+  color: var(--text-light);
+  margin-bottom: 35px;
+  max-width: 580px;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.hero-image-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+.hero-image {
+  max-width: 100%;
+  height: auto;
+  border: var(--border-main);
+  border-radius: 20px;
+  box-shadow: var(--shadow-flat-lg);
+  transform: rotate(-2deg);
+  transition: transform var(--transition-normal);
+  background-color: #ffffff;
+}
+
+.hero-image:hover {
+  transform: rotate(0deg) scale(1.02);
+}
+
+/* Services / Features Section */
+.section {
+  padding: 100px 0;
+  border-bottom: var(--border-main);
+}
+
+.section-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.section-tag {
+  margin-bottom: 15px;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-dark);
+}
+
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+.service-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.service-icon {
+  width: 60px;
+  height: 60px;
+  border: var(--border-main);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  box-shadow: var(--shadow-flat-sm);
+}
+
+.icon-blue { background-color: #93c5fd; }
+.icon-pink { background-color: #fca5a5; }
+.icon-yellow { background-color: #fde047; }
+.icon-green { background-color: #86efac; }
+.icon-purple { background-color: #c4b5fd; }
+
+.service-card h3 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.service-card p {
+  color: var(--text-light);
+  font-size: 1rem;
+  flex-grow: 1;
+}
+
+/* Steps Pipeline Section */
+.bg-light {
+  background-color: #ffffff;
+}
+
+.steps-container {
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.steps-container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 40px;
+  width: 4px;
+  background-color: var(--border-color);
+  z-index: 1;
+}
+
+.step-item {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 50px;
+  position: relative;
+  z-index: 2;
+}
+
+.step-item:last-child {
+  margin-bottom: 0;
+}
+
+.step-number {
+  width: 80px;
+  height: 80px;
+  border: var(--border-main);
+  border-radius: 50%;
+  background-color: var(--accent-yellow);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  font-weight: 800;
+  box-shadow: var(--shadow-flat-sm);
+  flex-shrink: 0;
+}
+
+.step-item:nth-child(even) .step-number {
+  background-color: var(--primary);
+  color: #ffffff;
+}
+
+.step-content {
+  background-color: var(--bg-color);
+  border: var(--border-main);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: var(--shadow-flat-sm);
+  width: 100%;
+}
+
+.step-content h3 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+.step-content p {
+  color: var(--text-light);
+}
+
+/* Info Section (Split Layout) */
+.info-section {
+  padding: 100px 0;
+  border-bottom: var(--border-main);
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  align-items: center;
+}
+
+.info-illustration-container {
+  display: flex;
+  justify-content: center;
+}
+
+.info-illustration {
+  max-width: 90%;
+  height: auto;
+  border: var(--border-main);
+  border-radius: 20px;
+  box-shadow: var(--shadow-flat);
+  background-color: #ffffff;
+}
+
+.info-content h2 {
+  font-size: 2.3rem;
+  font-weight: 800;
+  margin-bottom: 25px;
+}
+
+.info-list {
+  list-style: none;
+}
+
+.info-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.info-list-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #d1fae5;
+  border: 2px solid var(--accent-green);
+  color: var(--accent-green);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  flex-shrink: 0;
+  margin-top: 3px;
+}
+
+.info-list-text h4 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin-bottom: 5px;
+}
+
+.info-list-text p {
+  color: var(--text-light);
+}
+
+/* Call to Action */
+.cta-section {
+  padding: 80px 0;
+  background-color: var(--accent-yellow);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.cta-section h2 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
+
+.cta-section p {
+  font-size: 1.2rem;
+  color: var(--text-dark);
+  margin-bottom: 40px;
+}
+
+/* Animations & Micro-interactions */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(-2deg); }
+  50% { transform: translateY(-10px) rotate(-1deg); }
+  100% { transform: translateY(0px) rotate(-2deg); }
+}
+
+.hero-image {
+  animation: float 5s ease-in-out infinite;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .hero-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .hero-content p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-btns {
+    justify-content: center;
+  }
+  .services-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .info-grid {
+    grid-template-columns: 1fr;
+  }
+  .info-illustration-container {
+    order: -1;
+  }
+}
+
+@media (max-width: 768px) {
+  .hero-content h1 {
+    font-size: 2.6rem;
+  }
+  .services-grid {
+    grid-template-columns: 1fr;
+  }
+  .steps-container::before {
+    right: 25px;
+  }
+  .step-number {
+    width: 50px;
+    height: 50px;
+    font-size: 1.3rem;
+  }
+  .step-item {
+    gap: 20px;
+  }
+}

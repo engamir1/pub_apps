@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>سياسات النشر والالتزام | انشر تطبيقك</title>
+  <meta name="description" content="اقرأ سياسات النشر الرسمية لمتجر جوجل بلاي. نلتزم بقوانين المطورين لمنع التطبيقات الضارة وتطبيقات الـ WebView غير المطابقة لضمان أمان حسابك وقبول التطبيق.">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/policies.css">
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header class="header">
+    <div class="container header-container">
+      <a href="index.html" class="logo">
+        <div class="logo-icon">🚀</div>
+        <span>انشر تطبيقك</span>
+      </a>
+      
+      <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">☰</button>
+      
+      <nav class="nav-menu" id="navMenu">
+        <a href="index.html" class="nav-link">الرئيسية</a>
+        <a href="pricing.html" class="nav-link">باقات الأسعار</a>
+        <a href="policies.html" class="nav-link">سياسات النشر</a>
+        <a href="order.html" class="btn btn-primary nav-btn">اطلب الخدمة الآن</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Title Section -->
+  <section class="section" style="padding: 60px 0 30px; border-bottom: none;">
+    <div class="container text-center">
+      <span class="badge badge-secondary section-tag">الامتثال والشفافية القانونية</span>
+      <h1 class="section-title" style="font-size: 3rem; margin-top: 10px;">سياسات نشر التطبيقات وقوانين المتجر</h1>
+      <p style="color: var(--text-light); max-width: 600px; margin: 15px auto 0; font-size: 1.1rem;">
+        نحن ملتزمون بنسبة 100% بأحدث تحديثات سياسات مطوري جوجل بلاي. لضمان أمان حساب المطور الخاص بك وسرعة قبول تطبيقك، يرجى قراءة الشروط والقيود التالية.
+      </p>
+    </div>
+  </section>
+
+  <!-- Main Content Policy Section -->
+  <section class="section" style="padding-top: 10px;">
+    <div class="container">
+      
+      <!-- Warning Block -->
+      <div class="warning-block">
+        <h3>🚨 تحذير هام وتعهد بالامتثال (هام جداً قبل طلب النشر)</h3>
+        <p>
+          نلتزم في منصة <strong>"انشر تطبيقك"</strong> التزاماً صارماً بتطبيق لوائح Google Play Developer Program Policies. بناءً على ذلك، <strong>نحظر ونعتذر تماماً</strong> عن التعامل مع أو رفع أي من التطبيقات التالية التي تخالف القانون أو تتسبب في إغلاق حساب المطور:
+        </p>
+        <ul class="warning-list">
+          <li><strong>تطبيقات الـ WebView البسيطة:</strong> التطبيقات التي تقوم فقط بفتح موقع إلكتروني داخل إطار دون إضافة مزايا برمجية حقيقية وتفاعلية للهاتف (مثل الإشعارات، الكاميرا، العمل دون إنترنت، إلخ) - حيث تصنفها جوجل كـ "Web wrapper" أو "Spam" وتقوم برفضها وحظر الحساب.</li>
+          <li><strong>التطبيقات المقرصنة أو منسوخة المحتوى:</strong> التطبيقات التي تنتهك حقوق الملكية الفكرية والعلامات التجارية لجهات أخرى (مثل تطبيقات البث المباشر للمباريات، الألعاب المعدلة، إلخ).</li>
+          <li><strong>تطبيقات التضليل والبرمجيات الضارة (Malware):</strong> أي تطبيق يحتوي على أكواد تجسس، أو طلب صلاحيات غير مبررة (مثل القراءة القسرية للرسائل القصيرة أو جهات الاتصال)، أو تطبيقات النصب المالي.</li>
+        </ul>
+      </div>
+
+      <!-- Policy Tabs Switcher -->
+      <div class="policy-tabs">
+        <button class="tab-btn active" onclick="switchTab(event, 'webview-policy')">WebView والحد الأدنى للوظائف</button>
+        <button class="tab-btn" onclick="switchTab(event, 'testing-policy')">شروط الإعفاء والـ 20 مختبراً</button>
+        <button class="tab-btn" onclick="switchTab(event, 'data-safety')">أمان البيانات والخصوصية</button>
+        <button class="tab-btn" onclick="switchTab(event, 'target-sdk')">مستوى الـ SDK وحجم الحزمة</button>
+      </div>
+
+      <!-- Tab 1: WebView -->
+      <div id="webview-policy" class="card policy-content-panel active" style="margin-bottom: 60px;">
+        <div class="compliance-header">
+          <div class="compliance-icon">🌐</div>
+          <h3>سياسة WebView والحد الأدنى من الكفاءة</h3>
+        </div>
+        <p>تفرض جوجل شروطاً صارمة لضمان جودة التطبيقات المتاحة للمستخدمين، وتتلخص القواعد الخاصة بصفحات الويب المدمجة في الآتي:</p>
+        <ul class="policy-details-list">
+          <li>
+            <h4>١. إضافة قيمة أصلية (Native Added Value)</h4>
+            <p>يجب أن يتضمن تطبيقك وظائف خاصة بالهاتف لا يوفرها موقع الويب العادي، مثل التخزين المحلي، استخدام الكاميرا، إشعارات الدفع (Push Notifications)، أو العمل في الخلفية.</p>
+          </li>
+          <li>
+            <h4>٢. تجربة مستخدم متناسقة (UX Consistency)</h4>
+            <p>يجب ألا تظهر أزرار المتصفح العادية، ويجب تهيئة الموقع ليكون متوافقاً تماماً مع شاشات الموبايل (Responsive Layout) وسريع الاستجابة بدون بطء أو انقطاع.</p>
+          </li>
+          <li>
+            <h4>٣. إثبات ملكية النطاق (Domain Verification)</h4>
+            <p>إذا كان تطبيقك يعرض موقع ويب خاص بك، يجب إثبات ملكيتك للموقع عبر ملفات Asset Links الرقمية لضمان عدم رفض التطبيق بتهمة انتحال الصفة.</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab 2: Testing Policy -->
+      <div id="testing-policy" class="card policy-content-panel" style="margin-bottom: 60px;">
+        <div class="compliance-header">
+          <div class="compliance-icon">🧪</div>
+          <h3>شروط الإعفاء ونظام الـ 20 مختبراً</h3>
+        </div>
+        <div class="warning-block" style="border-color: var(--primary); background-color: #f0f4ff; margin-bottom: 25px; padding: 15px;">
+          <strong style="color: var(--primary-hover); font-size: 1.05rem;">💡 إقرار الإعفاء للحسابات القديمة:</strong>
+          <p style="margin-top: 5px; font-size: 0.95rem; font-weight: 600;">إذا كان حسابك الشخصي قديماً (تم إنشاؤه قبل نوفمبر 2023) أو حساب مؤسسة، فأنت <strong>معفى تماماً</strong> من شرط الاختبار المغلق وتستطيع الانتقال للنشر المباشر. ينطبق هذا الشرط فقط على الحسابات الشخصية المنشأة حديثاً.</p>
+        </div>
+        <p>مؤخراً في أواخر عام ٢٠٢٣، حدثت جوجل نظام النشر لحماية أمان المتجر، وتفرض القوانين الآتي للجهات غير المعفاة:</p>
+        <ul class="policy-details-list">
+          <li>
+            <h4>١. الفئة المستهدفة بالشرط</h4>
+            <p>ينطبق هذا الشرط حصرياً على الحسابات الشخصية للمطورين (Individual Accounts) المنشأة حديثاً. أما حسابات الشركات/المؤسسات (Organization Accounts) أو الحسابات الشخصية القديمة فهي معفاة من هذا الشرط وتنتقل للنشر المباشر.</p>
+          </li>
+          <li>
+            <h4>٢. فترة الاختبار (14 يوماً متواصلة)</h4>
+            <p>يجب تسجيل ما لا يقل عن 20 مختبراً خارجياً في مسار الاختبار المغلق (Closed Testing)، ويجب أن يقوموا بتحميل التطبيق وإبقائه مثبتاً على أجهزتهم وتجربته يومياً لمدة 14 يوماً متصلة.</p>
+          </li>
+          <li>
+            <h4>٣. تقديم تقرير النشر المفتوح</h4>
+            <p>بعد انتهاء الـ 14 يوماً، يتطلب منك الإجابة على استبيان رسمي من جوجل يوضح تفاصيل الاختبار، الأخطاء التي تم حلها، وآراء المختبرين، قبل أن تسمح لك جوجل بنقل التطبيق لمرحلة الإنتاج (Production).</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab 3: Data Safety -->
+      <div id="data-safety" class="card policy-content-panel" style="margin-bottom: 60px;">
+        <div class="compliance-header">
+          <div class="compliance-icon">🔒</div>
+          <h3>أمان البيانات (Data Safety) وسياسات الخصوصية</h3>
+        </div>
+        <p>خصوصية المستخدمين هي الأولوية القصوى لمنصة جوجل. نساعدك في صياغة الملفات والامتثال للآتي:</p>
+        <ul class="policy-details-list">
+          <li>
+            <h4>١. نموذج أمان البيانات (Data Safety Form)</h4>
+            <p>يجب الإفصاح بدقة عن أي بيانات يتم جمعها من المستخدم (مثل الاسم، البريد الإلكتروني، الموقع الجغرافي، الصور) وتحديد ما إذا كان يتم مشاركتها مع طرف ثالث (مثل شركات الإعلانات أو التحليلات).</p>
+          </li>
+          <li>
+            <h4>٢. رابط سياسة الخصوصية النشط</h4>
+            <p>تطلب جوجل وجود رابط دائم ونشط لسياسة الخصوصية الخاصة بتطبيقك، يجب أن يوضح البيانات التي يجمعها التطبيق وكيفية حذفها. نحن نوفر لك كتابة السياسة واستضافتها مجاناً كجزء من الخدمة.</p>
+          </li>
+          <li>
+            <h4>٣. طلب الصلاحيات الحساسة</h4>
+            <p>يجب ألا يطلب التطبيق صلاحيات الوصول للكاميرا، الميكروفون، أو الموقع الجغرافي الدقيق إلا إذا كانت الوظيفة الأساسية للتطبيق تعتمد على ذلك بشكل مباشر ومفهوم للمستخدم.</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Tab 4: Target SDK -->
+      <div id="target-sdk" class="card policy-content-panel" style="margin-bottom: 60px;">
+        <div class="compliance-header">
+          <div class="compliance-icon">📱</div>
+          <h3>مستوى الـ SDK المستهدف وحجم التطبيق</h3>
+        </div>
+        <p>تحديثات البناء البرمجي تضمن استقرار وتوافق التطبيق مع إصدارات أندرويد الحديثة:</p>
+        <ul class="policy-details-list">
+          <li>
+            <h4>١. مستوى الـ Target SDK الأدنى</h4>
+            <p>حالياً يفرض متجر جوجل بلاي أن تستهدف التطبيقات الجديدة مستوى <strong>Android 14 (Target SDK 34)</strong> كحد أدنى. والتطبيقات التي تستهدف إصدارات أقدم سيتم رفضها تلقائياً.</p>
+          </li>
+          <li>
+            <h4>٢. استخدام صيغة الـ AAB (Android App Bundle)</h4>
+            <p>أوقفت جوجل تماماً قبول حزم الـ APK التقليدية للنشر الأول للتطبيقات. يجب بناء وتصدير التطبيق بصيغة <code>.aab</code>، والتي تساهم في تقليل حجم التطبيق عن طريق إنشاء نسخ مخصصة لكل جهاز تلقائياً.</p>
+          </li>
+          <li>
+            <h4>٣. حدود حجم التطبيق</h4>
+            <p>يجب ألا يتجاوز حجم ملف الـ AAB الرئيسي 200 ميجابايت. للتطبيقات والألعاب الأكبر حجماً، يجب استخدام تقنية Play Asset Delivery لتحميل الملفات الكبيرة بشكل منفصل وآمن.</p>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Checklist Section -->
+      <div class="checklist-section">
+        <div class="section-header" style="margin-bottom: 40px;">
+          <span class="badge badge-primary section-tag">افحص تطبيقك بنفسك</span>
+          <h2 class="section-title" style="font-size: 2rem;">جدول مطابقة الشروط والسياسات</h2>
+        </div>
+
+        <div class="checklist-container">
+          <!-- Allowed Items -->
+          <div class="card checklist-card" style="border-color: var(--accent-green); box-shadow: 6px 6px 0px var(--accent-green);">
+            <h3 class="checklist-title" style="color: var(--accent-green-hover);">🟢 تطبيقات نقبل نشرها ونضمن قبولها</h3>
+            <ul class="check-item-list">
+              <li>
+                <div class="check-badge yes">✓</div>
+                <p>تطبيقات التجارة الإلكترونية والمتاجر المبنية بأكواد برمجية أصلية (Flutter, React Native, Native).</p>
+              </li>
+              <li>
+                <div class="check-badge yes">✓</div>
+                <p>تطبيقات الخدمات والأدوات (الآلات الحاسبة، الملاحظات، تحرير الصور الشخصية).</p>
+              </li>
+              <li>
+                <div class="check-badge yes">✓</div>
+                <p>تطبيقات الشركات والتعريف بالخدمات التي تحتوي على واجهة تفاعلية ونماذج حجز حقيقية.</p>
+              </li>
+              <li>
+                <div class="check-badge yes">✓</div>
+                <p>الألعاب ثنائية وثلاثية الأبعاد المطورة بمحركات معترف بها مثل Unity أو Godot.</p>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Prohibited Items -->
+          <div class="card checklist-card" style="border-color: var(--secondary);">
+            <h3 class="checklist-title" style="color: var(--secondary-hover);">🔴 تطبيقات نرفض نشرها تماماً لمخالفة السياسات</h3>
+            <ul class="check-item-list">
+              <li>
+                <div class="check-badge no">✗</div>
+                <p>التطبيقات التي تعرض بثاً مباشراً لقنوات تلفزيونية أو مباريات رياضية مشفرة بدون تصريح قانوني مكتوب.</p>
+              </li>
+              <li>
+                <div class="check-badge no">✗</div>
+                <p>تطبيقات القمار، العملات الرقمية غير المرخصة، أو الاستثمار الهرمي المضلل.</p>
+              </li>
+              <li>
+                <div class="check-badge no">✗</div>
+                <p>التطبيقات التي تفتح موقع ويب خارجي لا تملكه أو موقع ويب بسيط (WebView) بدون خدمات حقيقية مضافة.</p>
+              </li>
+              <li>
+                <div class="check-badge no">✗</div>
+                <p>التطبيقات التي تنتهك الخصوصية أو تنسخ اسم وأيقونة تطبيق شهير لخداع المستخدمين.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-col footer-about">
+        <a href="index.html" class="logo" style="color: white; margin-bottom: 15px;">
+          <div class="logo-icon" style="background-color: var(--secondary);">🚀</div>
+          <span>انشر تطبيقك</span>
+        </a>
+        <p>المنصة الرائدة والآمنة لمساعدة المطورين والشركات الناشئة في نشر وتجهيز تطبيقاتهم للهواتف الذكية على متجر جوجل بلاي والالتزام بالسياسات.</p>
+      </div>
+      
+      <div class="footer-col">
+        <h3>روابط سريعة</h3>
+        <ul class="footer-links">
+          <li><a href="index.html">الرئيسية</a></li>
+          <li><a href="pricing.html">باقات الأسعار</a></li>
+          <li><a href="policies.html">سياسات النشر</a></li>
+          <li><a href="order.html">اطلب الخدمة</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>السياسات والامتثال</h3>
+        <ul class="footer-links">
+          <li><a href="policies.html#webview-policy">سياسة WebView</a></li>
+          <li><a href="policies.html#testing-policy">شروط الاختبار المغلق</a></li>
+          <li><a href="policies.html#data-safety">أمان البيانات</a></li>
+          <li><a href="policies.html#terms">الشروط والأحكام</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3>تواصل معنا</h3>
+        <ul class="footer-contact">
+          <li>💬 واتساب: <a href="https://wa.me/201507890092" target="_blank">01507890092</a></li>
+          <li>📧 البريد: <a href="mailto:cedratech1@gmail.com">cedratech1@gmail.com</a></li>
+          <li>📍 مصر - CedraTech Inc.</li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="container footer-bottom">
+      <p>© 2026 منصة انشر تطبيقك. جميع الحقوق محفوظة لشركة CedraTech.</p>
+      <div class="social-links">
+        <a href="https://wa.me/201507890092" class="social-btn" target="_blank">💬</a>
+        <a href="mailto:cedratech1@gmail.com" class="social-btn">📧</a>
+        <a href="https://ipn.eg/S/eng_amir/instapay/2ERpU3" class="social-btn" target="_blank" title="دفع عبر انستا باي">💸</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // Tab switching functionality
+    function switchTab(evt, tabId) {
+      // Get all panels and buttons
+      const panels = document.querySelectorAll('.policy-content-panel');
+      const buttons = document.querySelectorAll('.tab-btn');
+
+      // Hide all panels
+      panels.forEach(panel => {
+        panel.classList.remove('active');
+      });
+
+      // Remove active class from buttons
+      buttons.forEach(btn => {
+        btn.classList.remove('active');
+      });
+
+      // Show specific panel and set button active
+      document.getElementById(tabId).classList.add('active');
+      evt.currentTarget.classList.add('active');
+    }
+  </script>
+</body>
+</html>
