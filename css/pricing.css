@@ -49,7 +49,7 @@
 /* Pricing Grid */
 .pricing-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 30px;
   margin-bottom: 80px;
 }
@@ -228,12 +228,8 @@
 /* Responsive adjustments */
 @media (max-width: 992px) {
   .pricing-grid {
-    grid-template-columns: 1fr 1fr;
     max-width: 700px;
     margin: 0 auto 50px;
-  }
-  .pricing-grid .pricing-card:last-child {
-    grid-column: span 2;
   }
   .faqs-grid {
     grid-template-columns: 1fr;
@@ -241,12 +237,6 @@
 }
 
 @media (max-width: 768px) {
-  .pricing-grid {
-    grid-template-columns: 1fr;
-  }
-  .pricing-grid .pricing-card:last-child {
-    grid-column: span 1;
-  }
   .toggle-btn {
     padding: 8px 16px;
     font-size: 0.9rem;
