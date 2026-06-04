@@ -323,13 +323,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     let price = pricingData[planVal].price;
     const planName = pricingData[planVal].name;
+    const updatePrice = pricingData[planVal].updatePrice;
     
     let methodText = 'Cedra Tech (حسابنا الرسمي المعتمد)';
-    if (planVal === 'vip' || (chkTransferAddon && chkTransferAddon.checked)) {
-      methodText += ' [مع نقل الملكية لاحقاً]';
-      if (planVal !== 'vip') {
-        price += 1000;
-      }
+    
+    let asoText = 'غير مشمول';
+    if (planVal === 'pro' || planVal === 'lifetime') {
+      asoText = 'مشمول مجاناً في الباقة';
+    } else if (chkAsoAddon && chkAsoAddon.checked) {
+      asoText = 'مطلوب (+500 ج.م)';
+      price += 500;
+    }
+
+    let transferText = 'غير مطلوب';
+    if (chkTransferAddon && chkTransferAddon.checked) {
+      transferText = 'مطلوب (+5500 ج.م)';
+      price += 5500;
     }
 
     document.getElementById('sumDevName').textContent = nameVal;
@@ -337,15 +346,24 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('sumAccountType').textContent = methodText;
     document.getElementById('sumAppTitle').textContent = appTitleVal;
     document.getElementById('sumAppCategory').textContent = categoryText;
+    
+    const sumAsoAddonEl = document.getElementById('sumAsoAddon');
+    if (sumAsoAddonEl) sumAsoAddonEl.textContent = asoText;
+    
+    const sumTransferAddonEl = document.getElementById('sumTransferAddon');
+    if (sumTransferAddonEl) sumTransferAddonEl.textContent = transferText;
+    
     document.getElementById('sumTotalPrice').textContent = `${price} ج.م`;
 
     // Configure success links
-    setupDispatchLinks(nameVal, planName, methodText, appTitleVal, categoryText, `${price} ج.م`);
+    setupDispatchLinks(nameVal, planName, methodText, appTitleVal, categoryText, asoText, transferText, updatePrice, `${price} ج.م`);
   }
 
-  function setupDispatchLinks(devName, planName, methodText, appTitle, appCategory, totalPrice) {
+  function setupDispatchLinks(devName, planName, methodText, appTitle, appCategory, asoText, transferText, updatePrice, totalPrice) {
     const phone = "201507890092";
     const email = "cedratech1@gmail.com";
+    
+    let updateText = updatePrice === 0 ? "مجانية بالكامل وللأبد" : `${updatePrice} ج.م للمرة`;
 
     // Text summary formatted nicely
     const orderDetails = 
@@ -353,12 +371,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
 📋 تفاصيل الطلب:
 - العميل: ${devName}
-- الباقة: ${planName}
+- الباقة المطلوبة: ${planName}
 - حساب النشر: ${methodText}
 - اسم التطبيق: ${appTitle}
 - تصنيف التطبيق: ${appCategory}
+- تجهيز أصول التطبيق والـ ASO: ${asoText}
+- طلب نقل ملكية التطبيق لاحقاً: ${transferText}
+- تكلفة التحديثات اللاحقة: ${updateText}
 - إجمالي التكلفة المتوقعة: ${totalPrice}
-- التحديثات اللاحقة: تبدأ من 3 دولار (150 ج.م) للمرة الواحدة.
 - حالة الملفات: تم إرفاق ملف الـ AAB والأصول محلياً وجاهزة للإرسال والمراجعة الفورية.
 
 بانتظار مراجعتكم وتأكيد التفاصيل للبدء والتحويل عبر InstaPay.`;
@@ -373,6 +393,97 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnSendEmail').setAttribute('href', emailUrl);
   }
 
+  // Submit Form data to FastAPI Backend
+  async function submitOrderToServer() {
+    // Disable buttons and show loading feedback
+    btnNext.disabled = true;
+    btnPrev.disabled = true;
+    const originalText = btnNext.textContent;
+    btnNext.textContent = 'جاري إرسال الطلب والملفات...';
+
+    // 1. Gather all form inputs
+    const devName = document.getElementById('devName').value;
+    const devPhone = document.getElementById('devPhone').value;
+    const devEmail = document.getElementById('devEmail').value;
+    const planSelection = document.querySelector('input[name="planSelection"]:checked').value;
+    const appTitle = document.getElementById('appTitle').value;
+    
+    const categorySelect = document.getElementById('appCategory');
+    const appCategory = categorySelect.options[categorySelect.selectedIndex].text;
+    
+    const appShortDesc = document.getElementById('appShortDesc').value;
+    const appLongDesc = document.getElementById('appLongDesc').value;
+    
+    const hasAsoAddon = chkAsoAddon && chkAsoAddon.checked;
+    const hasTransferAddon = chkTransferAddon && chkTransferAddon.checked;
+    const privacyLink = document.getElementById('privacyLink').value;
+    
+    // Calculate total price same as populateSummary
+    let price = pricingData[planSelection].price;
+    if (planSelection === 'basic' && hasAsoAddon) {
+      price += 500;
+    }
+    if (hasTransferAddon) {
+      price += 5500;
+    }
+
+    // 2. Build FormData object
+    const formData = new FormData();
+    formData.append('dev_name', devName);
+    formData.append('dev_phone', devPhone);
+    formData.append('dev_email', devEmail);
+    formData.append('plan_selection', planSelection);
+    formData.append('app_title', appTitle);
+    formData.append('app_category', appCategory);
+    formData.append('app_short_desc', appShortDesc);
+    formData.append('app_long_desc', appLongDesc);
+    formData.append('has_aso_addon', hasAsoAddon ? 'true' : 'false');
+    formData.append('has_transfer_addon', hasTransferAddon ? 'true' : 'false');
+    if (privacyLink) {
+      formData.append('privacy_link', privacyLink);
+    }
+    formData.append('total_price', price.toString());
+
+    // 3. Append uploaded files
+    if (uploadedFiles.icon) {
+      formData.append('file_icon', uploadedFiles.icon);
+    }
+    if (uploadedFiles.feature) {
+      formData.append('file_feature', uploadedFiles.feature);
+    }
+    if (uploadedFiles.screenshots && uploadedFiles.screenshots.length > 0) {
+      uploadedFiles.screenshots.forEach((file) => {
+        formData.append('file_screenshots', file);
+      });
+    }
+    if (uploadedFiles.aab) {
+      formData.append('file_aab', uploadedFiles.aab);
+    }
+
+    // 4. Send request to FastAPI backend
+    try {
+      const response = await fetch('/api/orders', {
+        method: 'POST',
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server returned code ${response.status}`);
+      }
+
+      // Order submitted successfully, show success panel
+      showSuccessState();
+    } catch (err) {
+      console.error('Error submitting order:', err);
+      alert('حدث خطأ أثناء إرسال طلبك والملفات إلى الخادم. يرجى التحقق من اتصالك بالشبكة والمحاولة مرة أخرى.');
+      
+      // Restore button states
+      btnNext.disabled = false;
+      btnPrev.disabled = false;
+      btnNext.textContent = originalText;
+    }
+  }
+
   // Navigation click listeners
   btnNext.addEventListener('click', () => {
     if (currentStep < totalSteps) {
@@ -381,8 +492,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateWizardUI();
       }
     } else {
-      // Trigger checkout / success state
-      showSuccessState();
+      // Trigger backend submit
+      submitOrderToServer();
     }
   });
 
