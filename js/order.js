@@ -325,7 +325,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const planName = pricingData[planVal].name;
     const updatePrice = pricingData[planVal].updatePrice;
     
-    let methodText = 'Cedra Tech (حسابنا الرسمي المعتمد)';
+    let methodText = 'حسابنا الشخصي المعتمد (معفى من شرط الـ 20 مختبراً)';
     
     let asoText = 'غير مشمول';
     if (planVal === 'pro' || planVal === 'lifetime') {
