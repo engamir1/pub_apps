@@ -13,15 +13,30 @@ def send_order_notification_email(order_data: dict):
         logger.warning(
             "SMTP credentials not fully configured. Order notification email skipped."
         )
-        print("==================================================")
-        print("          MOCK EMAIL ORDER NOTIFICATION           ")
-        print("==================================================")
-        print(f"To: {settings.NOTIFICATION_EMAIL}")
-        print(f"Subject: طلب نشر جديد: {order_data.get('app_title')}")
-        print("Order Metadata:")
-        for k, v in order_data.items():
-            print(f"  {k}: {v}")
-        print("==================================================")
+        try:
+            print("==================================================")
+            print("          MOCK EMAIL ORDER NOTIFICATION           ")
+            print("==================================================")
+            print(f"To: {settings.NOTIFICATION_EMAIL}")
+            print(f"Subject: طلب نشر جديد: {order_data.get('app_title')}")
+            print("Order Metadata:")
+            for k, v in order_data.items():
+                print(f"  {k}: {v}")
+            print("==================================================")
+        except UnicodeEncodeError:
+            # Fallback for Windows consoles using non-utf8 encodings
+            print("==================================================")
+            print("          MOCK EMAIL ORDER NOTIFICATION           ")
+            print("==================================================")
+            print(f"To: {settings.NOTIFICATION_EMAIL}")
+            print(f"Subject: [New Order Request] {repr(order_data.get('app_title'))}")
+            print("Order Metadata (Safe Representation):")
+            for k, v in order_data.items():
+                try:
+                    print(f"  {k}: {v}")
+                except UnicodeEncodeError:
+                    print(f"  {k}: {repr(v)}")
+            print("==================================================")
         return
 
     try:
