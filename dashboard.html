@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - تطبيقاتي | انشر تطبيقك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <span>انشر تطبيقك</span>
+            </a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">☰</button>
+            
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">الرئيسية</a>
+                <a href="pricing.html" class="nav-link">باقات الأسعار</a>
+                <a href="policies.html" class="nav-link">سياسات النشر</a>
+                <a href="dashboard.html" class="nav-link active">لوحة التحكم</a>
+                
+                <!-- Logged-in user elements (initially hidden, managed by js) -->
+                <span id="userEmailDisplay" class="user-email-badge" style="display: none; font-size: 0.9rem;"></span>
+                <a href="order.html" class="btn btn-primary nav-btn" id="headerOrderBtn">اطلب الخدمة الآن</a>
+                <button class="btn btn-secondary nav-btn" id="headerLogoutBtn" onclick="logout()" style="display: none; padding: 8px 18px; font-size: 0.95rem;">تسجيل الخروج</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- LOGIN SCREEN -->
+    <div class="login-wrapper" id="loginWrapper">
+        <div class="login-card">
+            <div class="login-logo">🚀</div>
+            <h2 class="login-title" id="authTitle">تسجيل الدخول</h2>
+            <p class="login-subtitle" id="authSubtitle">يرجى تسجيل الدخول لمتابعة تطبيقاتك وإدارتها</p>
+            
+            <!-- Email & Password Form -->
+            <form id="emailAuthForm" class="auth-form" onsubmit="handleEmailAuth(event)">
+                <div class="auth-group">
+                    <label class="auth-label" for="authEmail">البريد الإلكتروني</label>
+                    <input type="email" id="authEmail" class="auth-input" placeholder="name@example.com" required>
+                </div>
+                <div class="auth-group">
+                    <label class="auth-label" for="authPassword">كلمة المرور</label>
+                    <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" required minlength="6">
+                </div>
+                <button type="submit" id="btnAuthSubmit" class="btn-auth-submit">تسجيل الدخول</button>
+            </form>
+
+            <div class="auth-divider">أو</div>
+
+            <div style="display: flex; justify-content: center;" id="googleBtnContainer">
+                <div id="googleBtn"></div>
+            </div>
+            
+            <div id="loginError" style="margin-top: 15px; display: none;" class="error-message"></div>
+
+            <p class="auth-toggle-wrapper" style="text-align: center; color: var(--text-light); font-size: 0.85rem; margin-top: 15px; font-weight: 600;">
+                🔒 التسجيل متاح عبر دعوة مباشرة من فريق العمل فقط.
+            </p>
+        </div>
+    </div>
+
+    <!-- DASHBOARD SCREEN -->
+    <div class="dashboard-container container" id="dashboardWrapper" style="display: none;">
+        <div class="dashboard-header">
+            <div>
+                <h1 class="dashboard-title">لوحة تحكم العميل</h1>
+                <div class="user-welcome-info">
+                    <span>أهلاً بك،</span>
+                    <span id="userEmail" class="user-email-badge"></span>
+                </div>
+            </div>
+            <button onclick="logout()" id="dashboardLogoutBtn"
+                style="display: flex; align-items: center; gap: 8px; background: #fff0f0; color: #dc2626; border: 2px solid #dc2626; border-radius: 8px; padding: 10px 20px; font-weight: 800; font-size: 0.9rem; cursor: pointer; font-family: inherit; transition: all 0.2s;"
+                onmouseover="this.style.background='#dc2626';this.style.color='#fff'"
+                onmouseout="this.style.background='#fff0f0';this.style.color='#dc2626'">
+                🚪 تسجيل الخروج
+            </button>
+        </div>
+
+        <h2 class="dashboard-subtitle-sec">تطبيقاتي المرفوعة</h2>
+
+        <div id="dashboardStatus" class="status-container">
+            <div class="loading-spinner"></div>
+            جاري تحميل طلباتك...
+        </div>
+
+        <div class="orders-list" id="ordersList" style="display: none;">
+            <!-- Dynamic order cards injected here -->
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col footer-about">
+                <a href="index.html" class="logo" style="color: white; margin-bottom: 15px;">
+                    <div class="logo-icon" style="background-color: var(--secondary);">🚀</div>
+                    <span>انشر تطبيقك</span>
+                </a>
+                <p>المنصة الرائدة والآمنة لمساعدة المطورين والشركات الناشئة في نشر وتجهيز تطبيقاتهم للهواتف الذكية على متجر جوجل بلاي والالتزام بالسياسات.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="pricing.html">باقات الأسعار</a></li>
+                    <li><a href="policies.html">سياسات النشر</a></li>
+                    <li><a href="order.html">اطلب الخدمة</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>السياسات والامتثال</h3>
+                <ul class="footer-links">
+                    <li><a href="policies.html#webview-policy">سياسة WebView</a></li>
+                    <li><a href="policies.html#testing-policy">شروط الاختبار المغلق</a></li>
+                    <li><a href="policies.html#data-safety">أمان البيانات</a></li>
+                    <li><a href="policies.html#terms">الشروط والأحكام</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>تواصل معنا</h3>
+                <ul class="footer-contact">
+                    <li>💬 واتساب: <a href="https://wa.me/201507890092" target="_blank">01507890092</a></li>
+                    <li>📧 البريد: <a href="mailto:cedratech1@gmail.com">cedratech1@gmail.com</a></li>
+                    <li>📍 مصر - CedraTech Inc.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="container footer-bottom">
+            <p>© 2026 منصة انشر تطبيقك. جميع الحقوق محفوظة لشركة CedraTech.</p>
+            <div class="social-links">
+                <a href="https://wa.me/201507890092" class="social-btn" target="_blank">💬</a>
+                <a href="mailto:cedratech1@gmail.com" class="social-btn">📧</a>
+                <a href="https://ipn.eg/S/eng_amir/instapay/2ERpU3" class="social-btn" target="_blank" title="دفع عبر انستا باي">💸</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>

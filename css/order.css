@@ -549,3 +549,709 @@ textarea.form-control {
     font-size: 0.95rem;
   }
 }
+
+/* --- Cartoon Upload Animation Modal Overlay --- */
+
+.upload-progress-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.9);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  direction: rtl;
+  text-align: center;
+}
+
+.upload-progress-card {
+  background-color: #ffffff;
+  border: var(--border-main);
+  border-radius: 16px;
+  box-shadow: var(--shadow-flat);
+  padding: 40px;
+  width: 100%;
+  max-width: 650px;
+  position: relative;
+  animation: modalPopIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes modalPopIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.upload-progress-header h2 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-bottom: 10px;
+}
+
+.upload-progress-header p {
+  color: var(--text-light);
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  line-height: 1.5;
+}
+
+
+/* ============================================================
+   UPLOAD ANIMATION MODAL  — Pure CSS Truck Delivery Scene
+   Truck: LEFT (Warehouse) → RIGHT (Showroom/Google Play)
+   ============================================================ */
+
+/* Cartoon Scene container */
+.cartoon-scene {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(180deg, #bfdbfe 0%, #dbeafe 55%, #86efac 55%, #4ade80 68%, #6b7280 68%, #374151 75%, #374151 100%);
+  border: 3px solid #0f172a;
+  border-radius: 14px;
+  margin-bottom: 25px;
+  overflow: hidden;
+}
+
+/* ---- SKY ---- */
+.scene-sky {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 55%;
+}
+
+/* SUN */
+.scene-sun {
+  position: absolute;
+  top: 10px; right: 30px;
+  width: 36px; height: 36px;
+}
+.sun-core {
+  font-size: 1.8rem;
+  line-height: 1;
+  animation: sunPulse 3s ease-in-out infinite;
+}
+@keyframes sunPulse {
+  0%,100% { transform: scale(1); }
+  50%      { transform: scale(1.12); }
+}
+
+/* CLOUDS */
+.scene-cloud {
+  position: absolute;
+  font-size: 2rem;
+  opacity: 0.85;
+  animation: driftCloud 12s linear infinite;
+}
+.cloud-a { top: 8px;  left: -60px; animation-duration: 14s; animation-delay: 0s; }
+.cloud-b { top: 20px; left: -60px; animation-duration: 18s; animation-delay: -6s; font-size: 1.4rem; opacity: 0.6; }
+@keyframes driftCloud {
+  from { transform: translateX(0); }
+  to   { transform: translateX(720px); }
+}
+
+/* ---- GROUND ---- */
+.scene-ground {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 45%;
+}
+
+/* ROAD */
+.scene-road {
+  position: absolute;
+  bottom: 22px; left: 0; right: 0;
+  height: 22px;
+  background-color: #374151;
+  border-top: 3px solid #0f172a;
+  border-bottom: 3px solid #0f172a;
+}
+.road-dash {
+  position: absolute;
+  top: 7px;
+  height: 5px; width: 40px;
+  background-color: #fbbf24;
+  border-radius: 3px;
+  animation: dashMove 1.2s linear infinite;
+}
+.d1 { left: 15%;  animation-delay: 0s; }
+.d2 { left: 45%;  animation-delay: -0.4s; }
+.d3 { left: 75%;  animation-delay: -0.8s; }
+@keyframes dashMove {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-80px); }
+}
+
+/* ---- BUILDINGS ---- */
+.scene-building {
+  position: absolute;
+  bottom: 44px;
+  width: 105px;
+  z-index: 5;
+}
+.building-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  color: #fff;
+  text-align: center;
+  background: #0f172a;
+  border-radius: 0 0 6px 6px;
+  padding: 2px 4px;
+}
+
+/* WAREHOUSE (LEFT) */
+.warehouse-building {
+  left: 8px;
+}
+.warehouse-chimney {
+  position: absolute;
+  top: -22px; right: 20px;
+  width: 12px; height: 20px;
+  background: #374151;
+  border: 2px solid #0f172a;
+  border-radius: 3px 3px 0 0;
+}
+.chimney-smoke {
+  position: absolute;
+  top: -8px;
+  width: 10px; height: 10px;
+  background: rgba(200,200,200,0.7);
+  border-radius: 50%;
+  animation: chimneyPuff 2s ease-out infinite;
+}
+.s1 { left: 0;  animation-delay: 0s; }
+.s2 { left: 2px; animation-delay: -0.7s; width: 7px; height: 7px; }
+@keyframes chimneyPuff {
+  0%   { transform: translateY(0) scale(1);   opacity: 0.8; }
+  100% { transform: translateY(-20px) scale(2); opacity: 0; }
+}
+
+.wh-roof {
+  height: 18px;
+  background: #f59e0b;
+  border: 3px solid #0f172a;
+  border-radius: 4px 4px 0 0;
+  clip-path: polygon(0% 100%, 50% 0%, 100% 100%);
+  margin-bottom: -3px;
+}
+.wh-body {
+  height: 80px;
+  background: #fef3c7;
+  border: 3px solid #0f172a;
+  border-radius: 0 0 6px 6px;
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  justify-content: center;
+  padding: 6px 6px 0;
+  position: relative;
+}
+.building-window {
+  width: 18px; height: 18px;
+  background: #7dd3fc;
+  border: 2px solid #0f172a;
+  border-radius: 3px;
+  position: absolute;
+  top: 10px;
+}
+.building-window:first-child { left: 10px; }
+.building-window:nth-child(2) { right: 10px; }
+
+.building-door {
+  width: 28px; height: 40px;
+  border: 2px solid #0f172a;
+  border-radius: 4px 4px 0 0;
+  position: absolute;
+  bottom: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.wh-door { background: #78716c; }
+.door-inner { font-size: 1.1rem; }
+
+/* Stacked boxes outside warehouse */
+.ext-boxes {
+  position: absolute;
+  right: -18px; bottom: 3px;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 1px;
+}
+.ext-box {
+  font-size: 0.9rem;
+  line-height: 1;
+  animation: boxJiggle 2.4s ease-in-out infinite;
+}
+.eb-1 { animation-delay: 0s; }
+.eb-2 { animation-delay: 0.2s; }
+.eb-3 { animation-delay: 0.4s; }
+@keyframes boxJiggle {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-3px); }
+}
+
+/* SHOWROOM (RIGHT) */
+.showroom-building {
+  right: 8px;
+}
+.sr-roof {
+  height: 18px;
+  background: #6d28d9;
+  border: 3px solid #0f172a;
+  border-radius: 4px 4px 0 0;
+}
+.sr-body {
+  height: 80px;
+  background: #ede9fe;
+  border: 3px solid #0f172a;
+  border-radius: 0 0 6px 6px;
+  position: relative;
+  overflow: hidden;
+}
+.showroom-sign {
+  font-size: 0.5rem;
+  font-weight: 900;
+  background: #6d28d9;
+  color: #fff;
+  text-align: center;
+  padding: 2px 4px;
+  white-space: nowrap;
+}
+.showroom-window {
+  position: absolute;
+  bottom: 28px; left: 4px; right: 4px;
+  height: 26px;
+  background: #7dd3fc;
+  border: 2px solid #0f172a;
+  border-radius: 3px;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  overflow: hidden;
+}
+.display-item {
+  font-size: 1rem;
+  animation: displayPulse 2s ease-in-out infinite;
+}
+.di1 { animation-delay: 0s; }
+.di2 { animation-delay: -1s; }
+@keyframes displayPulse {
+  0%,100% { transform: scale(1); }
+  50%     { transform: scale(1.2); }
+}
+.sr-door {
+  background: #a78bfa;
+  left: 50%; transform: translateX(-50%);
+}
+
+/* ---- DELIVERY TRUCK ---- */
+.scene-truck {
+  position: absolute;
+  bottom: 48px;
+  left: 118px;                       /* start near warehouse */
+  width: 95px;
+  height: 48px;
+  z-index: 10;
+  animation: truckDrive 8s infinite ease-in-out;
+}
+
+/* Truck: LEFT→RIGHT = positive translateX */
+@keyframes truckDrive {
+  /* 0-12%: At warehouse (loading) */
+  0%, 12% {
+    transform: translateX(0) scaleX(1);   /* facing RIGHT */
+  }
+  /* 12-48%: Driving toward showroom */
+  48% {
+    transform: translateX(270px) scaleX(1);
+  }
+  /* 48-60%: At showroom (unloading) */
+  60% {
+    transform: translateX(270px) scaleX(1);
+  }
+  /* 62%: Flip to face LEFT */
+  62% {
+    transform: translateX(270px) scaleX(-1);
+  }
+  /* 62-88%: Return to warehouse (empty) */
+  88% {
+    transform: translateX(0) scaleX(-1);
+  }
+  /* 90-100%: Flip back to face RIGHT */
+  92%, 100% {
+    transform: translateX(0) scaleX(1);
+  }
+}
+
+/* Truck bounce */
+.scene-truck {
+  animation: truckDrive 8s infinite ease-in-out, truckBounce 0.35s ease-in-out infinite;
+}
+@keyframes truckBounce {
+  0%,100% { bottom: 48px; }
+  50%      { bottom: 50px; }
+}
+
+/* CAB */
+.truck-cab {
+  position: absolute;
+  top: 8px; right: 0;
+  width: 30px; height: 30px;
+  background: #2563eb;
+  border: 3px solid #0f172a;
+  border-radius: 4px 10px 4px 4px;
+  z-index: 2;
+}
+.cab-windshield {
+  position: absolute;
+  top: 4px; right: 4px;
+  width: 12px; height: 14px;
+  background: #bfdbfe;
+  border: 1.5px solid #0f172a;
+  border-radius: 2px;
+}
+.cab-light {
+  position: absolute;
+  bottom: 3px; right: 2px;
+  width: 6px; height: 6px;
+  background: #fbbf24;
+  border-radius: 50%;
+  animation: lightBlink 1s ease-in-out infinite alternate;
+}
+@keyframes lightBlink {
+  from { opacity: 1; box-shadow: 0 0 6px #fbbf24; }
+  to   { opacity: 0.4; box-shadow: none; }
+}
+
+/* CARGO BED */
+.truck-bed {
+  position: absolute;
+  top: 2px; left: 0;
+  width: 62px; height: 36px;
+  background: #f97316;
+  border: 3px solid #0f172a;
+  border-radius: 4px 4px 4px 4px;
+  display: flex; align-items: center; justify-content: center; gap: 4px;
+  overflow: hidden;
+}
+.truck-cargo-box {
+  font-size: 1.1rem;
+  animation: cargoAnim 8s infinite ease-in-out;
+}
+.cb1 { animation-delay: 0s; }
+.cb2 { animation-delay: 0.15s; }
+
+@keyframes cargoAnim {
+  /* loading: drop into truck */
+  0%   { opacity: 0; transform: translateY(-18px); }
+  10%  { opacity: 1; transform: translateY(0); }
+  /* riding loaded */
+  48%  { opacity: 1; transform: translateY(0); }
+  /* unloading: rise out at showroom */
+  56%  { opacity: 1; transform: translateY(-16px); }
+  60%, 90% { opacity: 0; transform: translateY(0); }
+  /* reappear at warehouse */
+  100% { opacity: 0; transform: translateY(-18px); }
+}
+
+/* WHEELS */
+.truck-wheel {
+  position: absolute;
+  bottom: -10px;
+  width: 20px; height: 20px;
+  background: #0f172a;
+  border: 3px solid #d1d5db;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #0f172a;
+  animation: spinWheel 0.5s linear infinite;
+}
+.w-front { right: 4px; }
+.w-back  { left: 4px; }
+.wheel-spoke {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 2px; height: 60%;
+  background: #d1d5db;
+  transform: translate(-50%, -50%);
+  border-radius: 2px;
+}
+@keyframes spinWheel {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* EXHAUST (behind cab = left side in LTR) */
+.exhaust-pipe {
+  position: absolute;
+  top: 20px; left: -10px;
+  z-index: 1;
+}
+.exhaust-puff {
+  position: absolute;
+  width: 10px; height: 10px;
+  background: rgba(156,163,175,0.75);
+  border-radius: 50%;
+  animation: puffOut 1.2s ease-out infinite;
+}
+.ep1 { animation-delay: 0s;    top: 0;    left: 0; }
+.ep2 { animation-delay: -0.4s; top: -4px; left: -3px; width: 7px; height: 7px; }
+.ep3 { animation-delay: -0.8s; top: 2px;  left: 3px;  width: 6px; height: 6px; }
+@keyframes puffOut {
+  0%   { transform: translate(0,0) scale(1);    opacity: 0.8; }
+  100% { transform: translate(-18px,-12px) scale(2.5); opacity: 0; }
+}
+
+/* ---- STATUS TEXT ---- */
+.upload-status-text {
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary-hover);
+  background-color: #f1f5f9;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px 16px;
+  box-shadow: var(--shadow-flat-sm);
+  display: inline-block;
+  min-width: 300px;
+  text-align: center;
+}
+
+/* Modal pop-in */
+@keyframes modalPopIn {
+  from { transform: scale(0.9); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* Buildings */
+.scene-building {
+  position: absolute;
+  bottom: 20px;
+  width: 100px;
+  height: 90px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+}
+
+.warehouse-building {
+  right: 20px;
+}
+
+.showroom-building {
+  left: 20px;
+}
+
+.building-roof {
+  height: 14px;
+  border: 3px solid #0f172a;
+  border-radius: 4px 4px 0 0;
+  width: 100%;
+}
+
+.warehouse-building .building-roof {
+  background-color: var(--accent-yellow);
+}
+
+.showroom-building .building-roof {
+  background-color: var(--secondary);
+}
+
+.building-body {
+  height: 76px;
+  background-color: #ffffff;
+  border: var(--border-main);
+  border-top: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border-radius: 0 0 6px 6px;
+}
+
+.building-emoji {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.building-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin-top: 4px;
+}
+
+/* Road styling */
+.scene-road {
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  right: 0;
+  height: 14px;
+  background-color: #0f172a;
+}
+
+.road-line {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  right: 0;
+  height: 4px;
+  border-bottom: 3px dashed #ffffff;
+}
+
+/* Delivery Truck container */
+.scene-truck {
+  position: absolute;
+  bottom: 23px;
+  right: 125px; /* start position near warehouse */
+  width: 80px;
+  height: 40px;
+  z-index: 10;
+  /* Animate driving movement */
+  animation: driveCycle 6s infinite ease-in-out;
+}
+
+/* Cab */
+.truck-cab {
+  position: absolute;
+  top: 12px;
+  left: 0;
+  width: 24px;
+  height: 24px;
+  background-color: var(--secondary);
+  border: 3px solid #0f172a;
+  border-radius: 4px 10px 4px 4px;
+}
+
+/* Cargo Bed */
+.truck-bed {
+  position: absolute;
+  top: 4px;
+  left: 21px;
+  width: 53px;
+  height: 32px;
+  background-color: var(--primary);
+  border: 3px solid #0f172a;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Box inside the truck bed */
+.truck-box {
+  font-size: 1.4rem;
+  position: absolute;
+  top: -16px;
+  left: 12px;
+  animation: cargoCycle 6s infinite ease-in-out;
+}
+
+/* Wheels */
+.truck-wheel {
+  position: absolute;
+  bottom: -8px;
+  width: 18px;
+  height: 18px;
+  background-color: #0f172a;
+  border: 3px solid #ffffff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #0f172a;
+  animation: spinWheel 6s infinite linear;
+}
+
+.wheel-front {
+  left: 7px;
+}
+
+.wheel-back {
+  right: 7px;
+}
+
+/* status text */
+.upload-status-text {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--primary-hover);
+  background-color: #f1f5f9;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: var(--shadow-flat-sm);
+  display: inline-block;
+  min-width: 320px;
+}
+
+/* --- ANIMATIONS KEYFRAMES --- */
+
+/* Drive back and forth, flip direction */
+@keyframes driveCycle {
+  /* 0-15%: Loading at warehouse */
+  0%, 15% {
+    transform: translateX(0) scaleX(1);
+  }
+  /* 15-40%: Driving from Warehouse to Showroom */
+  40% {
+    transform: translateX(-280px) scaleX(1);
+  }
+  /* 40-45%: Arrive at Showroom, flip */
+  45%, 55% {
+    transform: translateX(-280px) scaleX(-1);
+  }
+  /* 55-80%: Driving back to Warehouse */
+  80% {
+    transform: translateX(0) scaleX(-1);
+  }
+  /* 80-100%: Arrive at Warehouse, flip back */
+  85%, 100% {
+    transform: translateX(0) scaleX(1);
+  }
+}
+
+/* Cargo loading/unloading visibility */
+@keyframes cargoCycle {
+  /* 0-15%: Loading into truck (fades/drops in) */
+  0% {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* 15-40%: Riding in truck */
+  40% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  /* 40-50%: Unloading at showroom */
+  45% {
+    opacity: 1;
+    transform: translateY(-15px);
+  }
+  50%, 100% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+}
+
+/* Spin wheels only when moving */
+@keyframes spinWheel {
+  0%, 15% {
+    transform: rotate(0deg);
+  }
+  40% {
+    transform: rotate(-720deg);
+  }
+  45%, 55% {
+    transform: rotate(0deg);
+  }
+  80% {
+    transform: rotate(720deg);
+  }
+  85%, 100% {
+    transform: rotate(0deg);
+  }
+}

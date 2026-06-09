@@ -2,7 +2,7 @@ import os
 import requests
 
 # Base URL
-url = "http://127.0.0.1:8000/api/orders"
+url = "http://127.0.0.1:8001/api/orders"
 
 # Data payload
 data = {

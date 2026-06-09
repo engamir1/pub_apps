@@ -1,0 +1,169 @@
+/* Neo-Brutalist Authentication Layout */
+
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: calc(100vh - var(--header-height) - 150px); /* Adjust to fit between header and footer nicely */
+    padding: 3rem 1rem;
+    background-color: var(--bg-color);
+}
+
+.login-card {
+    background-color: var(--card-bg);
+    border: var(--border-main);
+    border-radius: 12px;
+    padding: 2.5rem;
+    width: 100%;
+    max-width: 450px;
+    box-shadow: var(--shadow-flat);
+    text-align: center;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.login-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: var(--shadow-flat-lg);
+}
+
+.login-logo {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    display: inline-block;
+}
+
+.login-title {
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-dark);
+    display: inline-block;
+    border-bottom: 3px solid var(--accent-yellow);
+    padding-bottom: 4px;
+}
+
+.login-subtitle {
+    color: var(--text-light);
+    font-size: 0.95rem;
+    margin-top: 10px;
+    margin-bottom: 2rem;
+    font-weight: 600;
+}
+
+/* Auth Form Fields & Controls */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    margin-top: 20px;
+    text-align: right;
+}
+
+.auth-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.auth-label {
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    font-weight: 700;
+}
+
+.auth-input {
+    background-color: #ffffff;
+    border: var(--border-main);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    color: var(--text-dark);
+    font-family: inherit;
+    font-size: 0.95rem;
+    width: 100%;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+}
+
+.auth-input:focus {
+    border-color: var(--primary);
+    background-color: #ffffff;
+}
+
+.btn-auth-submit {
+    background-color: var(--primary);
+    color: white;
+    border: var(--border-main);
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-weight: 800;
+    font-size: 1.05rem;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    font-family: inherit;
+    box-shadow: var(--shadow-flat-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-auth-submit:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-auth-submit:active {
+    transform: translate(2px, 2px);
+    box-shadow: var(--shadow-hover);
+}
+
+.btn-auth-submit:disabled {
+    background-color: var(--text-light);
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+/* Divider styling */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: var(--text-light);
+    margin: 20px 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.auth-divider:not(:empty)::before {
+    margin-left: .75em;
+}
+
+.auth-divider:not(:empty)::after {
+    margin-right: .75em;
+}
+
+/* Mode toggles */
+.auth-toggle-wrapper {
+    margin-top: 25px;
+    font-size: 0.95rem;
+    color: var(--text-light);
+    font-weight: 600;
+}
+
+.auth-toggle {
+    color: var(--primary);
+    cursor: pointer;
+    font-weight: 700;
+    text-decoration: underline;
+    transition: color var(--transition-fast);
+}
+
+.auth-toggle:hover {
+    color: var(--primary-hover);
+}

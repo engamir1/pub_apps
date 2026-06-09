@@ -1,36 +1,35 @@
 import os
-import sqlite3
-import json
+import sys
 
-db_path = os.path.abspath(
-    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "uploads", "orders.db")
-)
+# Add backend directory to sys.path to allow importing app
+sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-print(f"Checking database path: {db_path}")
+from app.database import get_mongodb_client, get_next_sequence_value
+from app.config import settings
 
-if not os.path.exists(db_path):
-    print("WARNING: database file does not exist yet. Launching main.py once is required to create it.")
-    exit(1)
+print("=========================================")
+print("  MongoDB Atlas Connection Verification  ")
+print("=========================================")
+
+print(f"Target Connection URI: {settings.MONGODB_URI.split('@')[-1] if '@' in settings.MONGODB_URI else settings.MONGODB_URI} (Credentials masked)")
 
 try:
-    conn = sqlite3.connect(db_path)
-    cursor = conn.cursor()
+    db = get_mongodb_client()
     
-    # List all tables
-    cursor.execute("SELECT name FROM sqlite_master WHERE type='table';")
-    tables = cursor.fetchall()
-    print("Tables found in database:", [t[0] for t in tables])
+    # Perform a ping to verify connectivity
+    db.command("ping")
+    print("[OK] Ping successful! Connected to MongoDB Atlas cluster.")
     
-    if "orders" in [t[0] for t in tables]:
-        # Get column info
-        cursor.execute("PRAGMA table_info(orders);")
-        columns = cursor.fetchall()
-        print("\nColumns in 'orders' table:")
-        for col in columns:
-            print(f"  Column ID: {col[0]}, Name: {col[1]}, Type: {col[2]}, Nullable: {col[3] == 0}, Default: {col[4]}")
-    else:
-        print("ERROR: 'orders' table not found in database.")
-        
-    conn.close()
+    # Test Auto-increment counter sequence
+    seq_val = get_next_sequence_value("test_seq")
+    print(f"[OK] Auto-increment test passed. Sequence value: {seq_val}")
+    
+    # List collections
+    collections = db.list_collection_names()
+    print(f"[OK] Existing collections: {collections}")
+    
+    print("\nSUCCESS: Database config is fully functional.")
 except Exception as e:
-    print(f"Error checking database: {e}")
+    print(f"[ERROR] Connection ERROR: {e}")
+    sys.exit(1)
+

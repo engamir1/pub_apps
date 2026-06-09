@@ -1,0 +1,300 @@
+/* Neo-Brutalist Admin Dashboard Styles */
+
+.dashboard-container {
+    padding: 40px 20px 80px;
+}
+
+.dashboard-header {
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    border-bottom: 3px solid var(--border-color);
+    padding-bottom: 20px;
+}
+
+.dashboard-title {
+    font-size: 2.2rem;
+    font-weight: 800;
+    margin: 0;
+    color: var(--text-dark);
+    position: relative;
+    display: inline-block;
+}
+
+.dashboard-title::after {
+    content: '';
+    position: absolute;
+    bottom: -23px;
+    right: 0;
+    width: 60px;
+    height: 6px;
+    background-color: var(--primary);
+    border-radius: 3px;
+}
+
+/* User profile text */
+.user-welcome-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.user-email-badge {
+    background-color: var(--card-bg);
+    border: 2px solid var(--border-color);
+    padding: 6px 12px;
+    border-radius: 6px;
+    color: var(--text-dark);
+    font-weight: 800;
+    box-shadow: var(--shadow-flat-sm);
+}
+
+/* Table card layout */
+.table-card {
+    background-color: var(--card-bg);
+    border: var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-flat);
+    margin-bottom: 40px;
+    overflow: hidden;
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: right;
+}
+
+th {
+    background-color: #f1f5f9;
+    padding: 16px 14px;
+    font-weight: 800;
+    color: var(--text-dark);
+    border-bottom: 3px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+td {
+    padding: 16px 14px;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 0.95rem;
+    vertical-align: middle;
+    color: var(--text-dark);
+}
+
+tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+/* Custom Neo-Brutalist Badges for table */
+.badge-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    border: 2px solid var(--border-color);
+    box-shadow: 2px 2px 0px var(--border-color);
+}
+
+.badge-pending {
+    background-color: var(--accent-yellow);
+    color: var(--text-dark);
+}
+
+.badge-published {
+    background-color: #e0e7ff;
+    color: #3730a3;
+}
+
+.badge-paid {
+    background-color: var(--accent-green);
+    color: #ffffff;
+}
+
+.badge-deleted {
+    background-color: var(--secondary);
+    color: #ffffff;
+}
+
+/* Action button controls */
+.btn-action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    color: white;
+    font-weight: 800;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-family: inherit;
+    margin: 2px;
+    box-shadow: 2px 2px 0px var(--border-color);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-action:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px var(--border-color);
+}
+
+.btn-publish {
+    background-color: var(--primary);
+}
+
+.btn-publish:hover {
+    background-color: var(--primary-hover);
+}
+
+.btn-pay {
+    background-color: var(--accent-green);
+}
+
+.btn-pay:hover {
+    background-color: var(--accent-green-hover);
+}
+
+.btn-delete {
+    background-color: var(--secondary);
+}
+
+.btn-delete:hover {
+    background-color: var(--secondary-hover);
+}
+
+/* File link buttons */
+.btn-file {
+    background-color: #f1f5f9;
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+    font-size: 0.8rem;
+    font-weight: 800;
+    padding: 4px 8px;
+    text-decoration: none;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 2px;
+    box-shadow: 2px 2px 0px var(--border-color);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-file:hover {
+    background-color: #e2e8f0;
+}
+
+.btn-file:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px var(--border-color);
+}
+
+/* Deadline text tags */
+.deadline-text {
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: block;
+    margin-top: 6px;
+}
+
+.deadline-active {
+    color: #92400e; /* amber */
+}
+
+.deadline-overdue {
+    color: var(--secondary-hover);
+    animation: textPulse 2.5s infinite;
+}
+
+@keyframes textPulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.4; }
+    100% { opacity: 1; }
+}
+
+/* Textarea notes */
+.notes-textarea {
+    width: 100%;
+    min-width: 180px;
+    height: 60px;
+    background-color: #ffffff;
+    color: var(--text-dark);
+    border: 2px solid var(--border-color);
+    border-radius: 6px;
+    padding: 6px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    resize: vertical;
+    outline: none;
+    box-sizing: border-box;
+    transition: border-color var(--transition-fast);
+}
+
+.notes-textarea:focus {
+    border-color: var(--primary);
+}
+
+.btn-save-notes {
+    background-color: #334155;
+    color: white;
+    border: 2px solid var(--border-color);
+    padding: 3px 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 4px;
+    display: inline-block;
+    box-shadow: 2px 2px 0px var(--border-color);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+}
+
+.btn-save-notes:hover {
+    background-color: var(--primary);
+}
+
+.btn-save-notes:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0px var(--border-color);
+}
+
+/* Empty or Loading States */
+.status-container {
+    text-align: center;
+    padding: 50px;
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: var(--text-light);
+}
+
+.loading-spinner {
+    border: 5px solid rgba(15, 23, 42, 0.1);
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border-left-color: var(--primary);
+    animation: spin 0.8s linear infinite;
+    margin: 0 auto 20px;
+    border-width: 6px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.error-message {
+    color: var(--secondary-hover);
+    font-weight: 700;
+}

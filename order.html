@@ -7,8 +7,14 @@
   <meta name="description" content="قم بتعبئة متطلبات نشر تطبيقك على متجر جوجل بلاي. اختر الباقة، أدخل الميتا داتا، ارفع الأصول والملفات، واستكمل النشر بسهولة وأمان.">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/order.css">
+  <script>
+    if (!localStorage.getItem('admin_token')) {
+      window.location.href = '/dashboard.html';
+    }
+  </script>
 </head>
 <body>
+
 
   <!-- Navigation Header -->
   <header class="header">
@@ -65,8 +71,37 @@
         <div class="wizard-step-panel active" data-step="1">
           <h2 class="step-title">الخطة وبيانات الاتصال</h2>
           
-          <!-- Plan Selection Radio Cards -->
+          <!-- Order Type Selector -->
           <div class="form-group">
+            <label class="required">نوع الطلب:</label>
+            <div class="radio-group" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); display: grid; gap: 15px; margin-bottom: 15px;">
+              <div class="radio-option">
+                <input type="radio" name="orderType" value="new" checked required>
+                <div class="radio-label-box">
+                  <span class="radio-label-title" style="color: var(--primary);">تطبيق جديد 🆕</span>
+                  <span class="radio-label-desc">رفع تطبيق لأول مرة على المتجر</span>
+                </div>
+              </div>
+              <div class="radio-option">
+                <input type="radio" name="orderType" value="update" required>
+                <div class="radio-label-box">
+                  <span class="radio-label-title" style="color: var(--secondary);">تحديث تطبيق منشور 🚀</span>
+                  <span class="radio-label-desc">نشر نسخة (إصدار) جديدة</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Existing Apps Selection (Shown only when orderType == 'update') -->
+          <div class="form-group" id="appSelectGroup" style="display: none; margin-bottom: 25px;">
+            <label for="existingAppSelect" class="required">اختر التطبيق المراد تحديثه:</label>
+            <select id="existingAppSelect" class="form-control">
+              <option value="" disabled selected>اختر تطبيقك...</option>
+            </select>
+          </div>
+
+          <!-- Plan Selection Radio Cards (Hidden when orderType == 'update') -->
+          <div class="form-group" id="planSelectionGroup">
             <label class="required">اختر باقة الخدمة:</label>
             <div class="radio-group" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); display: grid; gap: 15px;">
               <div class="radio-option">
@@ -93,8 +128,8 @@
             </div>
           </div>
 
-          <!-- Account Information Info Block -->
-          <div class="form-group">
+          <!-- Account Information Info Block (Hidden when orderType == 'update') -->
+          <div class="form-group" id="accountInfoBlock">
             <div class="warning-block" style="background-color: #eef2ff; border-color: var(--primary); padding: 15px; margin-bottom: 0; box-shadow: none;">
               <strong style="color: var(--primary-hover); font-size: 1rem; display: block; margin-bottom: 5px;">🌐 حساب النشر الشخصي المعتمد ودعم كامل:</strong>
               <p style="font-size: 0.9rem; font-weight: 600; line-height: 1.5; color: var(--text-dark);">
@@ -103,8 +138,8 @@
             </div>
           </div>
 
-          <!-- Additional Add-ons -->
-          <div class="form-group">
+          <!-- Additional Add-ons (Hidden when orderType == 'update') -->
+          <div class="form-group" id="addonsGroup">
             <label>خيارات إضافية للباقة:</label>
             <div style="display: flex; flex-direction: column; gap: 15px;">
               <!-- ASO Addon -->
@@ -131,7 +166,6 @@
             </div>
           </div>
 
-
           <!-- Developer Info -->
           <div class="form-row">
             <div class="form-group">
@@ -155,86 +189,106 @@
         <div class="wizard-step-panel" data-step="2">
           <h2 class="step-title">تفاصيل وبيانات التطبيق (ASO)</h2>
           
-          <div class="form-row">
-            <div class="form-group">
-              <label for="appTitle" class="required">اسم التطبيق المقترح (بالعربية أو الإنجليزية):</label>
-              <input type="text" id="appTitle" class="form-control" placeholder="مثال: تطبيق توصيل الطلبات" required>
-              <span class="form-helper">الحد الأقصى لاسم التطبيق في متجر جوجل هو 30 حرفاً.</span>
+          <!-- Container for New App Fields -->
+          <div id="panelNewAppFields">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="appTitle" class="required">اسم التطبيق المقترح (بالعربية أو الإنجليزية):</label>
+                <input type="text" id="appTitle" class="form-control" placeholder="مثال: تطبيق توصيل الطلبات" required>
+                <span class="form-helper">الحد الأقصى لاسم التطبيق في متجر جوجل هو 30 حرفاً.</span>
+              </div>
+              <div class="form-group">
+                <label for="appCategory" class="required">تصنيف التطبيق الأساسي:</label>
+                <select id="appCategory" class="form-control" required>
+                  <option value="" disabled selected>اختر التصنيف...</option>
+                  <option value="business">أعمال وإنتاجية (Business)</option>
+                  <option value="shopping">تسوق وتجارة إلكترونية (Shopping)</option>
+                  <option value="education">تعليمي وتثقيفي (Education)</option>
+                  <option value="health">صحة ورياضة (Health & Fitness)</option>
+                  <option value="entertainment">ترفيه وألعاب (Entertainment & Games)</option>
+                  <option value="tools">أدوات وخدمات (Tools)</option>
+                  <option value="other">تصنيف آخر</option>
+                </select>
+              </div>
             </div>
+
             <div class="form-group">
-              <label for="appCategory" class="required">تصنيف التطبيق الأساسي:</label>
-              <select id="appCategory" class="form-control" required>
-                <option value="" disabled selected>اختر التصنيف...</option>
-                <option value="business">أعمال وإنتاجية (Business)</option>
-                <option value="shopping">تسوق وتجارة إلكترونية (Shopping)</option>
-                <option value="education">تعليمي وتثقيفي (Education)</option>
-                <option value="health">صحة ورياضة (Health & Fitness)</option>
-                <option value="entertainment">ترفيه وألعاب (Entertainment & Games)</option>
-                <option value="tools">أدوات وخدمات (Tools)</option>
-                <option value="other">تصنيف آخر</option>
-              </select>
+              <label for="appShortDesc" class="required">الوصف القصير للتطبيق (Short Description):</label>
+              <input type="text" id="appShortDesc" class="form-control" placeholder="اكتب جملاً ترويجية شيقة للتطبيق" maxlength="80" required>
+              <span class="form-helper">الحد الأقصى 80 حرفاً. سيعرض للمستخدم في شاشة البحث السريع.</span>
+            </div>
+
+            <div class="form-group">
+              <label for="appLongDesc" class="required">الوصف الطويل والمفصل (Full Description):</label>
+              <textarea id="appLongDesc" class="form-control" placeholder="اشرح مميزات التطبيق، كيفية الاستخدام، الفائدة للمستخدمين بالتفصيل..." maxlength="4000" required></textarea>
+              <span class="form-helper">الحد الأقصى 4000 حرف. يفضل أن يحتوي على الكلمات المفتاحية الأكثر بحثاً.</span>
             </div>
           </div>
 
-          <div class="form-group">
-            <label for="appShortDesc" class="required">الوصف القصير للتطبيق (Short Description):</label>
-            <input type="text" id="appShortDesc" class="form-control" placeholder="اكتب جملاً ترويجية شيقة للتطبيق" maxlength="80" required>
-            <span class="form-helper">الحد الأقصى 80 حرفاً. سيعرض للمستخدم في شاشة البحث السريع.</span>
-          </div>
-
-          <div class="form-group">
-            <label for="appLongDesc" class="required">الوصف الطويل والمفصل (Full Description):</label>
-            <textarea id="appLongDesc" class="form-control" placeholder="اشرح مميزات التطبيق، كيفية الاستخدام، الفائدة للمستخدمين بالتفصيل..." maxlength="4000" required></textarea>
-            <span class="form-helper">الحد الأقصى 4000 حرف. يفضل أن يحتوي على الكلمات المفتاحية الأكثر بحثاً.</span>
+          <!-- Container for Update App Fields (Shown only when orderType == 'update') -->
+          <div id="panelUpdateAppFields" style="display: none;">
+            <div class="form-group">
+              <label for="appVersion" class="required">رقم الإصدار الجديد (Version Name):</label>
+              <input type="text" id="appVersion" class="form-control" placeholder="مثال: 1.1.0">
+              <span class="form-helper">رقم الإصدار المقترح للتحديث الحالي (مثال: 1.0.1 أو 2.0.0).</span>
+            </div>
+            <div class="form-group">
+              <label for="changelog" class="required">ما الجديد في هذا الإصدار (Changelog):</label>
+              <textarea id="changelog" class="form-control" placeholder="اشرح التغييرات والميزات الجديدة أو المشاكل التي تم إصلاحها في هذا التحديث..." maxlength="1000"></textarea>
+              <span class="form-helper">سيعرض للمستخدمين في المتجر تحت قسم "ما الجديد".</span>
+            </div>
           </div>
         </div>
 
         <!-- STEP 3: Files & Assets -->
         <div class="wizard-step-panel" data-step="3">
           <h2 class="step-title">أصول وملفات التطبيق</h2>
-          <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.9rem;">
-            إذا لم تكن تملك أصولاً جاهزة (أيقونات أو لقطات شاشة)، فلا تقلق! باقتنا تشمل تصميمها بالكامل. يمكنك تجاوز الرفع في حال عدم توفرها وسنقوم نحن بالمهمة.
-          </p>
+          
+          <div id="panelNewAppAssets">
+            <p style="color: var(--text-light); margin-bottom: 20px; font-size: 0.9rem;">
+              إذا لم تكن تملك أصولاً جاهزة (أيقونات أو لقطات شاشة)، فلا تقلق! باقتنا تشمل تصميمها بالكامل. يمكنك تجاوز الرفع في حال عدم توفرها وسنقوم نحن بالمهمة.
+            </p>
 
-          <div class="form-row">
-            <!-- App Icon Upload -->
-            <div class="form-group">
-              <label>أيقونة التطبيق (موصى بها: 512x512 بكسل):</label>
-              <div class="file-dropzone" id="dropzoneIcon">
-                <div class="dropzone-icon">🎨</div>
-                <div class="dropzone-text">اسحب وأسقط أيقونة التطبيق هنا</div>
-                <div class="dropzone-subtext">أو انقر للاختيار (PNG, JPG)</div>
-                <input type="file" id="fileIcon" class="file-input-hidden" accept="image/png, image/jpeg">
+            <div class="form-row">
+              <!-- App Icon Upload -->
+              <div class="form-group">
+                <label>أيقونة التطبيق (موصى بها: 512x512 بكسل):</label>
+                <div class="file-dropzone" id="dropzoneIcon">
+                  <div class="dropzone-icon">🎨</div>
+                  <div class="dropzone-text">اسحب وأسقط أيقونة التطبيق هنا</div>
+                  <div class="dropzone-subtext">أو انقر للاختيار (PNG, JPG)</div>
+                  <input type="file" id="fileIcon" class="file-input-hidden" accept="image/png, image/jpeg">
+                </div>
+                <div class="preview-container" id="previewIconContainer"></div>
               </div>
-              <div class="preview-container" id="previewIconContainer"></div>
+
+              <!-- Feature Graphic Upload -->
+              <div class="form-group">
+                <label>الصورة المميزة (موصى بها: 1024x500 بكسل):</label>
+                <div class="file-dropzone" id="dropzoneFeature">
+                  <div class="dropzone-icon">🖼️</div>
+                  <div class="dropzone-text">اسحب وأسقط الصورة المميزة هنا</div>
+                  <div class="dropzone-subtext">أو انقر للاختيار (PNG, JPG)</div>
+                  <input type="file" id="fileFeature" class="file-input-hidden" accept="image/png, image/jpeg">
+                </div>
+                <div class="preview-container" id="previewFeatureContainer"></div>
+              </div>
             </div>
 
-            <!-- Feature Graphic Upload -->
+            <!-- Screenshots Multiple Upload -->
             <div class="form-group">
-              <label>الصورة المميزة (موصى بها: 1024x500 بكسل):</label>
-              <div class="file-dropzone" id="dropzoneFeature">
-                <div class="dropzone-icon">🖼️</div>
-                <div class="dropzone-text">اسحب وأسقط الصورة المميزة هنا</div>
-                <div class="dropzone-subtext">أو انقر للاختيار (PNG, JPG)</div>
-                <input type="file" id="fileFeature" class="file-input-hidden" accept="image/png, image/jpeg">
+              <label>صور لقطات الشاشة (Screenshots) (حتى 8 لقطات):</label>
+              <div class="file-dropzone" id="dropzoneScreenshots">
+                <div class="dropzone-icon">📱</div>
+                <div class="dropzone-text">اسحب وأسقط لقطات شاشة التطبيق هنا</div>
+                <div class="dropzone-subtext">يمكنك تحديد ملفات متعددة معاً (PNG, JPG)</div>
+                <input type="file" id="fileScreenshots" class="file-input-hidden" accept="image/png, image/jpeg" multiple>
               </div>
-              <div class="preview-container" id="previewFeatureContainer"></div>
+              <div class="preview-container" id="previewScreenshotsContainer"></div>
             </div>
           </div>
 
-          <!-- Screenshots Multiple Upload -->
-          <div class="form-group">
-            <label>صور لقطات الشاشة (Screenshots) (حتى 8 لقطات):</label>
-            <div class="file-dropzone" id="dropzoneScreenshots">
-              <div class="dropzone-icon">📱</div>
-              <div class="dropzone-text">اسحب وأسقط لقطات شاشة التطبيق هنا</div>
-              <div class="dropzone-subtext">يمكنك تحديد ملفات متعددة معاً (PNG, JPG)</div>
-              <input type="file" id="fileScreenshots" class="file-input-hidden" accept="image/png, image/jpeg" multiple>
-            </div>
-            <div class="preview-container" id="previewScreenshotsContainer"></div>
-          </div>
-
-          <!-- AAB File Upload -->
+          <!-- AAB File Upload (Required for both) -->
           <div class="form-group">
             <label class="required">ملف التطبيق بصيغة Android App Bundle (AAB):</label>
             <div class="file-dropzone" id="dropzoneAAB">
@@ -444,6 +498,113 @@
       </div>
     </div>
   </footer>
+
+  <!-- Upload Animation Modal Overlay -->
+  <div id="uploadProgressModal" class="upload-progress-modal" style="display: none;">
+    <div class="upload-progress-card">
+      <div class="upload-progress-header">
+        <h2>جاري شحن ونشر تطبيقك... 🚚💨</h2>
+        <p>يرجى عدم إغلاق الصفحة، نقوم بنقل ملفات التطبيق من المخزن إلى معرض جوجل بلاي.</p>
+      </div>
+
+      <!-- Cartoon Scene — direction:ltr to keep left=warehouse, right=showroom -->
+      <div class="cartoon-scene" dir="ltr">
+
+        <!-- Sky layer -->
+        <div class="scene-sky">
+          <div class="scene-sun">
+            <div class="sun-core">☀️</div>
+            <div class="sun-ray r1"></div><div class="sun-ray r2"></div>
+            <div class="sun-ray r3"></div><div class="sun-ray r4"></div>
+          </div>
+          <div class="scene-cloud cloud-a">☁️</div>
+          <div class="scene-cloud cloud-b">☁️</div>
+        </div>
+
+        <!-- Ground + Road -->
+        <div class="scene-ground">
+          <div class="scene-road">
+            <div class="road-dash d1"></div>
+            <div class="road-dash d2"></div>
+            <div class="road-dash d3"></div>
+          </div>
+        </div>
+
+        <!-- ===== WAREHOUSE (LEFT) ===== -->
+        <div class="scene-building warehouse-building">
+          <div class="warehouse-chimney">
+            <div class="chimney-smoke s1"></div>
+            <div class="chimney-smoke s2"></div>
+          </div>
+          <div class="building-roof wh-roof"></div>
+          <div class="building-body wh-body">
+            <div class="building-window"></div>
+            <div class="building-window"></div>
+            <div class="building-door wh-door">
+              <div class="door-inner">📦</div>
+            </div>
+          </div>
+          <div class="building-label">المخزن</div>
+          <!-- Stacked boxes outside -->
+          <div class="ext-boxes">
+            <div class="ext-box eb-3">📦</div>
+            <div class="ext-box eb-2">📦</div>
+            <div class="ext-box eb-1">📦</div>
+          </div>
+        </div>
+
+        <!-- ===== DELIVERY TRUCK ===== -->
+        <div class="scene-truck">
+          <!-- Exhaust smoke (behind truck / left side) -->
+          <div class="exhaust-pipe">
+            <div class="exhaust-puff ep1"></div>
+            <div class="exhaust-puff ep2"></div>
+            <div class="exhaust-puff ep3"></div>
+          </div>
+          <!-- Cargo bed -->
+          <div class="truck-bed">
+            <div class="truck-cargo-box cb1">📦</div>
+            <div class="truck-cargo-box cb2">📱</div>
+          </div>
+          <!-- Cab -->
+          <div class="truck-cab">
+            <div class="cab-windshield"></div>
+            <div class="cab-light"></div>
+          </div>
+          <!-- Wheels -->
+          <div class="truck-wheel w-front">
+            <div class="wheel-spoke"></div>
+          </div>
+          <div class="truck-wheel w-back">
+            <div class="wheel-spoke"></div>
+          </div>
+        </div>
+
+        <!-- ===== SHOWROOM (RIGHT) ===== -->
+        <div class="scene-building showroom-building">
+          <div class="building-roof sr-roof"></div>
+          <div class="building-body sr-body">
+            <div class="showroom-sign">🏪 معرض جوجل بلاي</div>
+            <div class="showroom-window">
+              <div class="display-item di1">📱</div>
+              <div class="display-item di2">📱</div>
+            </div>
+            <div class="building-door sr-door">
+              <div class="door-inner">▶</div>
+            </div>
+          </div>
+          <div class="building-label">معرض العرض</div>
+        </div>
+
+      </div><!-- /cartoon-scene -->
+
+      <!-- Live status text -->
+      <div class="upload-status-text" id="uploadStatusText">
+        جاري تحميل ملفات التطبيق وتجهيزها للرفع...
+      </div>
+    </div>
+  </div>
+
 
   <script src="js/main.js"></script>
   <script src="js/order.js"></script>

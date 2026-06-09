@@ -128,3 +128,176 @@ def send_order_notification_email(order_data: dict):
         logger.info("Order notification email sent successfully.")
     except Exception as e:
         logger.error(f"Failed to send order notification email: {e}")
+
+def send_published_notification_email(order_data: dict):
+    """Sends an email to the developer notifying them that their app is published and prompting for InstaPay payment within 3 days."""
+    recipient_email = order_data.get('dev_email')
+    app_title = order_data.get('app_title')
+    total_price = order_data.get('total_price')
+
+    if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
+        logger.warning("SMTP credentials not configured. Published notification email skipped.")
+        try:
+            print("==================================================")
+            print("       MOCK EMAIL APP PUBLISHED NOTIFICATION      ")
+            print("==================================================")
+            print(f"To: {recipient_email}")
+            print(f"Subject: تهانينا! تم نشر تطبيقك \"{app_title}\" على المتجر 🎉")
+            print(f"Payment Deadline: 3 days")
+            print(f"Required Amount: {total_price} EGP")
+            print(f"Payment Info: {settings.INSTAPAY_DETAILS}")
+            print("==================================================")
+        except UnicodeEncodeError:
+            print("==================================================")
+            print("       MOCK EMAIL APP PUBLISHED NOTIFICATION      ")
+            print("==================================================")
+            print(f"To: {recipient_email}")
+            print(f"Subject: Congratulations! your app '{ascii(app_title)}' is published.")
+            print(f"Payment Deadline: 3 days")
+            print(f"Required Amount: {total_price} EGP")
+            print(f"Payment Info: {ascii(settings.INSTAPAY_DETAILS)}")
+            print("==================================================")
+        return
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"تهانينا! تم نشر تطبيقك \"{app_title}\" على المتجر 🎉"
+        msg["From"] = settings.SMTP_USER
+        msg["To"] = recipient_email
+
+        html = f"""
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body {{ font-family: Arial, sans-serif; direction: rtl; text-align: right; line-height: 1.6; color: #1e293b; }}
+            .container {{ padding: 20px; border: 2px solid #1e293b; border-radius: 12px; max-width: 600px; margin: 0 auto; box-shadow: 4px 4px 0px #1e293b; background-color: #f8fafc; }}
+            .header {{ background-color: #10b981; color: white; padding: 20px; border: 2px solid #1e293b; border-radius: 8px; text-align: center; margin-bottom: 20px; box-shadow: 3px 3px 0px #1e293b; }}
+            .header h2 {{ margin: 0; font-size: 1.5rem; }}
+            .content {{ padding: 10px; }}
+            .payment-card {{ background-color: #fffbeb; border: 2px dashed #d97706; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center; }}
+            .amount {{ font-size: 1.5rem; font-weight: bold; color: #b45309; }}
+            .footer {{ font-size: 0.9rem; color: #64748b; text-align: center; margin-top: 20px; }}
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>تهانينا! تم نشر تطبيقك بنجاح على المتجر 🚀</h2>
+            </div>
+            <div class="content">
+              <p>مرحباً <strong>{order_data.get('dev_name')}</strong>،</p>
+              <p>يسعدنا إبلاغك بأن تطبيقك <strong>"{app_title}"</strong> قد تم نشره بنجاح وأصبح متاحاً الآن على متجر جوجل بلاي!</p>
+              <p>وفقاً لسياسة الخدمة لدينا، يرجى إتمام عملية الدفع خلال <strong>3 أيام كحد أقصى</strong> للاستمرار في نشر التطبيق وتجنب حذفه.</p>
+              
+              <div class="payment-card">
+                <p style="margin: 0 0 10px 0;">المبلغ المطلوب سداده:</p>
+                <div class="amount">{total_price} ج.م</div>
+                <p style="margin: 10px 0 0 0; font-weight: bold;">{settings.INSTAPAY_DETAILS}</p>
+              </div>
+              
+              <p>بمجرد إرسال المبلغ، يرجى إرسال لقطة شاشة للتحويل عبر الواتساب لتأكيد الدفع فوراً.</p>
+            </div>
+            <div class="footer">
+              <p>شكراً لثقتكم بخدماتنا.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(html, "html", "utf-8"))
+
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            server.starttls()
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.sendmail(settings.SMTP_USER, recipient_email, msg.as_string())
+        
+        logger.info("Published notification email sent successfully.")
+    except Exception as e:
+        logger.error(f"Failed to send published notification email: {e}")
+
+def send_payment_reminder_email(order_data: dict):
+    """Sends a warning reminder email to the developer that their 3-day deadline has passed."""
+    recipient_email = order_data.get('dev_email')
+    app_title = order_data.get('app_title')
+    total_price = order_data.get('total_price')
+
+    if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
+        logger.warning("SMTP credentials not configured. Payment reminder email skipped.")
+        try:
+            print("==================================================")
+            print("       MOCK EMAIL PAYMENT REMINDER WARNING       ")
+            print("==================================================")
+            print(f"To: {recipient_email}")
+            print(f"Subject: تنبيه هام وعاجل: يرجى سداد مستحقات نشر تطبيق \"{app_title}\" لتفادي الحذف")
+            print(f"Required Amount: {total_price} EGP")
+            print(f"Payment Info: {settings.INSTAPAY_DETAILS}")
+            print("==================================================")
+        except UnicodeEncodeError:
+            print("==================================================")
+            print("       MOCK EMAIL PAYMENT REMINDER WARNING       ")
+            print("==================================================")
+            print(f"To: {recipient_email}")
+            print(f"Subject: Urgent: Payment reminder for application '{ascii(app_title)}'")
+            print(f"Required Amount: {total_price} EGP")
+            print(f"Payment Info: {ascii(settings.INSTAPAY_DETAILS)}")
+            print("==================================================")
+        return
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"تنبيه هام وعاجل: يرجى سداد مستحقات نشر تطبيق \"{app_title}\" لتفادي الحذف ⚠️"
+        msg["From"] = settings.SMTP_USER
+        msg["To"] = recipient_email
+
+        html = f"""
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body {{ font-family: Arial, sans-serif; direction: rtl; text-align: right; line-height: 1.6; color: #1e293b; }}
+            .container {{ padding: 20px; border: 2px solid #f43f5e; border-radius: 12px; max-width: 600px; margin: 0 auto; box-shadow: 4px 4px 0px #f43f5e; background-color: #fff1f2; }}
+            .header {{ background-color: #f43f5e; color: white; padding: 20px; border: 2px solid #e11d48; border-radius: 8px; text-align: center; margin-bottom: 20px; box-shadow: 3px 3px 0px #e11d48; }}
+            .header h2 {{ margin: 0; font-size: 1.5rem; }}
+            .content {{ padding: 10px; }}
+            .payment-card {{ background-color: #ffffff; border: 2px dashed #f43f5e; border-radius: 8px; padding: 15px; margin: 20px 0; text-align: center; }}
+            .amount {{ font-size: 1.5rem; font-weight: bold; color: #e11d48; }}
+            .footer {{ font-size: 0.9rem; color: #64748b; text-align: center; margin-top: 20px; }}
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>تنبيه هام: انتهاء المهلة المحددة للدفع ⚠️</h2>
+            </div>
+            <div class="content">
+              <p>مرحباً <strong>{order_data.get('dev_name')}</strong>،</p>
+              <p>نود إخطارك بأنه قد مضت <strong>3 أيام</strong> منذ نشر تطبيقك <strong>"{app_title}"</strong> على المتجر دون استلام دفعة الاشتراك.</p>
+              <p>لضمان استمرار نشر التطبيق وعدم حذفه من حساب المطور الخاص بنا، يرجى سداد المستحقات فوراً عبر InstaPay:</p>
+              
+              <div class="payment-card">
+                <p style="margin: 0 0 10px 0;">المبلغ المطلوب سداده:</p>
+                <div class="amount">{total_price} ج.م</div>
+                <p style="margin: 10px 0 0 0; font-weight: bold;">{settings.INSTAPAY_DETAILS}</p>
+              </div>
+              
+              <p style="color: #e11d48; font-weight: bold;">في حال عدم تأكيد الدفع خلال 24 ساعة القادمة، سنضطر للبدء في إجراءات حذف التطبيق من المتجر.</p>
+            </div>
+            <div class="footer">
+              <p>إذا كنت قد قمت بالتحويل بالفعل، يرجى تجاهل هذا الإيميل والتواصل معنا عبر الواتساب فوراً لتأكيد الدفع.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(html, "html", "utf-8"))
+
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            server.starttls()
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.sendmail(settings.SMTP_USER, recipient_email, msg.as_string())
+        
+        logger.info("Payment reminder email sent successfully.")
+    except Exception as e:
+        logger.error(f"Failed to send payment reminder email: {e}")
+
