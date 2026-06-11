@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تفاصيل التطبيق | انشر تطبيقك</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/auth.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/app_details.css">
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth-compat.js"></script>
+</head>
+<body>
+
+    <!-- Navigation Header -->
+    <header class="header">
+        <div class="container header-container">
+            <a href="index.html" class="logo">
+                <div class="logo-icon">🚀</div>
+                <span>انشر تطبيقك</span>
+            </a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="فتح القائمة">☰</button>
+            
+            <nav class="nav-menu" id="navMenu">
+                <a href="index.html" class="nav-link">الرئيسية</a>
+                <a href="pricing.html" class="nav-link">باقات الأسعار</a>
+                <a href="policies.html" class="nav-link">سياسات النشر</a>
+                <a href="dashboard.html" class="nav-link active">لوحة التحكم</a>
+                
+                <span id="userEmailDisplay" class="user-email-badge" style="display: none; font-size: 0.9rem;"></span>
+                <a href="order.html" class="btn btn-primary nav-btn" id="headerOrderBtn">اطلب الخدمة الآن</a>
+                <button class="btn btn-secondary nav-btn" id="headerLogoutBtn" onclick="logout()" style="display: none; padding: 8px 18px; font-size: 0.95rem;">تسجيل الخروج</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- MAIN APP DETAILS VIEW -->
+    <div class="app-details-container container">
+        
+        <!-- Back Navigation Link -->
+        <div class="back-link-wrapper">
+            <a href="dashboard.html" class="back-link">
+                <span>🔙 العودة للوحة التحكم</span>
+            </a>
+        </div>
+
+        <div id="loadingState" class="status-container">
+            <div class="loading-spinner"></div>
+            جاري تحميل تفاصيل التطبيق...
+        </div>
+
+        <div class="app-details-layout" id="appContent" style="display: none;">
+            
+            <!-- App Main Header Card -->
+            <div class="app-details-header-card">
+                <div class="app-details-icon" id="appHeaderIcon">📱</div>
+                <div class="app-details-info">
+                    <h1 class="app-details-title" id="appHeaderTitle">اسم التطبيق</h1>
+                    <div class="app-details-meta">
+                        <span class="app-meta-badge" id="appHeaderCategory">التصنيف</span>
+                        <span class="app-meta-badge" id="appHeaderPlan" style="background-color: #f5f3ff; color: var(--primary);">الباقة الأساسية</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Buttons -->
+            <div class="details-tabs">
+                <button class="tab-btn" onclick="switchTab('versions')">🕒 سجل الإصدارات والتحديث</button>
+                <button class="tab-btn active" onclick="switchTab('details')">📝 بيانات التطبيق والأصول</button>
+                <button class="tab-btn" onclick="switchTab('chat')">💬 الشات الفني مع الإدارة <span id="unreadBadge" style="display:none; background-color: var(--secondary); color:white; border-radius:50%; padding: 2px 6px; font-size:0.75rem; font-weight:800; margin-right:5px;">●</span></button>
+            </div>
+
+            <!-- TAB 1: VERSIONS TIMELINE & UPLOAD VERSION -->
+            <div class="tab-panel" id="panel-versions">
+                <div class="timeline-layout">
+                    
+                    <!-- Left: Timeline display of uploaded versions -->
+                    <div>
+                        <h2 class="dashboard-subtitle-sec">تاريخ الإصدارات</h2>
+                        <div class="version-log-list" id="versionsList">
+                            <!-- Injected dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Right: Quick version upload form -->
+                    <div class="form-card" style="align-self: flex-start;">
+                        <h2 class="form-card-title">🚀 رفع إصدار جديد للتطبيق</h2>
+                        <div id="updatePriceNotice" style="background-color: #fffbeb; border: 2px dashed #d97706; border-radius: 8px; padding: 12px; margin-bottom: 20px; font-weight: 800; text-align: center; color: #b45309; font-size: 0.9rem;">
+                            تكلفة هذا التحديث: <span id="lblUpdatePrice">0</span> ج.م (بناءً على باقة التطبيق)
+                        </div>
+                        
+                        <form id="frmUploadVersion" onsubmit="handleUploadVersion(event)">
+                            <div class="form-group">
+                                <label class="form-label" for="txtAppVersion">رقم الإصدار الجديد</label>
+                                <input type="text" id="txtAppVersion" class="form-input" placeholder="مثال: 1.1.0" required>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="txtChangelog">سجل التغييرات في هذا الإصدار</label>
+                                <textarea id="txtChangelog" class="form-textarea" placeholder="اكتب التحديثات التي تمت في التطبيق..." required></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">ملف حزمة التطبيق الجديدة (.aab)</label>
+                                <div id="dropzoneAAB" class="dropzone" style="padding: 20px; text-align:center; cursor:pointer; background:#f8fafc; border:2px dashed var(--border-color); border-radius:8px;">
+                                    <span style="font-size: 1.5rem; display:block; margin-bottom:5px;">📦</span>
+                                    <span id="txtAabDropzone" style="font-weight:700; font-size:0.85rem; color: var(--text-light);">اسحب وأسقط ملف الـ AAB الجديد هنا</span>
+                                    <input type="file" id="fileAAB" accept=".aab" style="display:none;" required>
+                                </div>
+                                <div id="previewAAB" class="preview-container" style="margin-top:10px;"></div>
+                            </div>
+
+                            <button type="submit" id="btnSubmitVersion" class="btn btn-primary" style="width: 100%; padding:12px; font-weight:800; font-size:1rem; font-family:inherit; margin-top:10px;">
+                                رفع التحديث ونشره بالمتجر 🚀
+                            </button>
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- TAB 2: EDIT APP DETAILS FORM -->
+            <div class="tab-panel active" id="panel-details">
+                <form id="frmUpdateApp" onsubmit="handleUpdateApp(event)">
+                    <div class="details-form-grid">
+                        
+                        <!-- App Metadata Form -->
+                        <div class="form-card">
+                            <h2 class="form-card-title">معلومات التطبيق بالمتجر</h2>
+                            
+                            <div class="form-group">
+                                <label class="form-label" for="txtTitle">اسم التطبيق بالمتجر</label>
+                                <input type="text" id="txtTitle" class="form-input" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="txtCategory">تصنيف التطبيق</label>
+                                <select id="txtCategory" class="form-select" required>
+                                    <option>تطبيقات أدوات وإنتاجية</option>
+                                    <option>ألعاب وتسلية</option>
+                                    <option>تعليم ودراسة</option>
+                                    <option>أعمال ومال وتجارة</option>
+                                    <option>تواصل اجتماعي ودردشة</option>
+                                    <option>صحة ولياقة بدنية</option>
+                                    <option>سفر وخرائط ومواقع</option>
+                                    <option>أخبار وصحافة ومراجع</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="txtShortDesc">الوصف القصير بالتطبيق بالمتجر (80 حرفاً كحد أقصى)</label>
+                                <input type="text" id="txtShortDesc" class="form-input" maxlength="80" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="txtLongDesc">الوصف الطويل والشرح التفصيلي للتطبيق (4000 حرفاً كحد أقصى)</label>
+                                <textarea id="txtLongDesc" class="form-textarea" required style="min-height: 180px;"></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label" for="txtPrivacyLink">رابط سياسة الخصوصية الخاص بالتطبيق (Privacy Policy)</label>
+                                <input type="url" id="txtPrivacyLink" class="form-input" placeholder="سيتم إنشائه واستضافته مجاناً في حال تركه فارغاً">
+                            </div>
+                        </div>
+
+                        <!-- App Assets Form -->
+                        <div class="form-card">
+                            <h2 class="form-card-title">أصول ومرفقات التطبيق الترويجية</h2>
+                            
+                            <div class="form-group">
+                                <label class="form-label">أيقونة التطبيق عالية الجودة (512x512 PNG)</label>
+                                <div id="dropzoneIcon" class="dropzone" style="padding: 15px; text-align:center; cursor:pointer; background:#f8fafc; border:2px dashed var(--border-color); border-radius:8px;">
+                                    <span id="txtIconDropzone" style="font-weight:700; font-size:0.8rem; color: var(--text-light);">اسحب وأسقط الأيقونة هنا</span>
+                                    <input type="file" id="fileIcon" accept="image/png" style="display:none;">
+                                </div>
+                                <div id="previewIcon" class="preview-container" style="margin-top:10px;"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">الصورة الترويجية المميزة (1024x500 PNG)</label>
+                                <div id="dropzoneFeature" class="dropzone" style="padding: 15px; text-align:center; cursor:pointer; background:#f8fafc; border:2px dashed var(--border-color); border-radius:8px;">
+                                    <span id="txtFeatureDropzone" style="font-weight:700; font-size:0.8rem; color: var(--text-light);">اسحب وأسقط الصورة المميزة هنا</span>
+                                    <input type="file" id="fileFeature" accept="image/png" style="display:none;">
+                                </div>
+                                <div id="previewFeature" class="preview-container" style="margin-top:10px;"></div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">صور لقطات الشاشة للتطبيق (من 2 إلى 8 لقطات شاشة)</label>
+                                <div id="dropzoneScreenshots" class="dropzone" style="padding: 15px; text-align:center; cursor:pointer; background:#f8fafc; border:2px dashed var(--border-color); border-radius:8px;">
+                                    <span id="txtScreenshotsDropzone" style="font-weight:700; font-size:0.8rem; color: var(--text-light);">اسحب وأسقط لقطات الشاشة هنا</span>
+                                    <input type="file" id="fileScreenshots" accept="image/*" multiple style="display:none;">
+                                </div>
+                                <div id="previewScreenshots" class="preview-container" style="margin-top:10px; display:flex; flex-wrap:wrap; gap:10px;"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <button type="submit" id="btnUpdateApp" class="btn btn-primary" style="display:block; margin: 30px auto 0; padding:14px 40px; font-weight:800; font-size:1.1rem; font-family:inherit; min-width: 250px;">
+                        💾 حفظ وتحديث بيانات التطبيق
+                    </button>
+                </form>
+            </div>
+
+            <!-- TAB 3: SUPPORT CHAT PANEL -->
+            <div class="tab-panel" id="panel-chat">
+                <div class="chat-card">
+                    <div class="chat-header">
+                        <div class="chat-header-status"></div>
+                        <h3 class="chat-header-title">المشرف الفني - نشر وتجهيز التطبيقات</h3>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-empty">
+                            <div class="chat-empty-icon">💬</div>
+                            <p>أهلاً بك في الدعم الداخلي للتطبيق.<br>يمكنك الاستفسار عن حالة التطبيق ومراجعة المشرف مباشرة هنا.</p>
+                        </div>
+                    </div>
+                    
+                    <form class="chat-input-area" onsubmit="handleSendChat(event)">
+                        <input type="text" id="txtChatInput" class="chat-input" placeholder="اكتب رسالتك للمشرف الفني هنا..." required>
+                        <button type="submit" class="btn-send-chat">إرسال ✉️</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container footer-grid">
+            <div class="footer-col footer-about">
+                <a href="index.html" class="logo" style="color: white; margin-bottom: 15px;">
+                    <div class="logo-icon" style="background-color: var(--secondary);">🚀</div>
+                    <span>انشر تطبيقك</span>
+                </a>
+                <p>المنصة الرائدة والآمنة لمساعدة المطورين والشركات الناشئة في نشر وتجهيز تطبيقاتهم للهواتف الذكية على متجر جوجل بلاي والالتزام بالسياسات.</p>
+            </div>
+            
+            <div class="footer-col">
+                <h3>روابط سريعة</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html">الرئيسية</a></li>
+                    <li><a href="pricing.html">باقات الأسعار</a></li>
+                    <li><a href="policies.html">سياسات النشر</a></li>
+                    <li><a href="order.html">اطلب الخدمة</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>السياسات والامتثال</h3>
+                <ul class="footer-links">
+                    <li><a href="policies.html#webview-policy">سياسة WebView</a></li>
+                    <li><a href="policies.html#testing-policy">شروط الاختبار المغلق</a></li>
+                    <li><a href="policies.html#data-safety">أمان البيانات</a></li>
+                    <li><a href="policies.html#terms">الشروط والأحكام</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h3>تواصل معنا</h3>
+                <ul class="footer-contact">
+                    <li>💬 واتساب: <a href="https://wa.me/201507890092" target="_blank">01507890092</a></li>
+                    <li>📧 البريد: <a href="mailto:cedratech1@gmail.com">cedratech1@gmail.com</a></li>
+                    <li>📍 مصر - CedraTech Inc.</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="container footer-bottom">
+            <p>© 2026 منصة انشر تطبيقك. جميع الحقوق محفوظة لشركة CedraTech.</p>
+        </div>
+    </footer>
+
+    <!-- LOADING MODAL (For file uploads) -->
+    <div class="progress-modal-overlay" id="uploadProgressModal" style="display: none;">
+        <div class="progress-modal-card">
+            <div class="progress-spinner-animation"></div>
+            <h3 class="progress-modal-title">جاري رفع وحفظ البيانات...</h3>
+            <p class="progress-modal-status" id="uploadStatusText">يرجى الانتظار، جاري تسليم الملفات بصورة آمنة... ⏳</p>
+        </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script src="js/app_details.js"></script>
+</body>
+</html>

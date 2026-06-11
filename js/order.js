@@ -1,7 +1,9 @@
 // Detect backend URL: use relative path if on localhost, absolute if on Firebase
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? (window.location.port === '8001' ? '' : 'http://localhost:8001')
-  : 'http://localhost:8001';
+if (typeof API_BASE === 'undefined') {
+  window.API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? (window.location.port === '8001' ? '' : 'http://localhost:8001')
+    : 'http://localhost:8001';
+}
 
 // Redirect to dashboard if not logged in
 if (!localStorage.getItem('admin_token')) {
@@ -704,7 +706,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let fetchSuccess = false;
 
     const fetchPromise = (async () => {
-      const response = await fetch(`${API_BASE}/api/orders`, {
+      const endpoint = isUpdate ? `${API_BASE}/api/orders` : `${API_BASE}/api/apps`;
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('admin_token')}`

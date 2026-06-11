@@ -167,43 +167,16 @@ async function logout() {
     showLogin();
 }
 
-async function deleteOrder(orderId, orderTitle, versionName) {
-    const confirmed = confirm(`هل أنت متأكد من حذف طلب الإصدار ${versionName} من تطبيق "${orderTitle}"?\n\nتحذير: سيتم حذف الطلب نهائياً ولا يمكن التراجع عنه.`);
-    if (!confirmed) return;
-
-    try {
-        const res = await fetch(`${API_BASE}/api/orders/${orderId}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': `Bearer ${userToken}` }
-        });
-
-        if (res.status === 401 || res.status === 403) {
-            alert('ليس لديك صلاحية حذف هذا الطلب.');
-            return;
-        }
-        if (!res.ok) {
-            const err = await res.json().catch(() => ({}));
-            throw new Error(err.detail || `خطأ ${res.status}`);
-        }
-
-        // Reload dashboard after successful deletion
-        loadUserOrders();
-    } catch (err) {
-        console.error(err);
-        alert(`حدث خطأ أثناء الحذف: ${err.message}`);
-    }
-}
-
 async function loadUserOrders() {
     const statusEl = document.getElementById('dashboardStatus');
-    const listEl = document.getElementById('ordersList');
+    const listEl = document.getElementById('appsList');
 
     statusEl.style.display = 'block';
     listEl.style.display = 'none';
     listEl.innerHTML = '';
 
     try {
-        const res = await fetch(`${API_BASE}/api/orders`, {
+        const res = await fetch(`${API_BASE}/api/apps`, {
             headers: { 'Authorization': `Bearer ${userToken}` }
         });
 
@@ -212,14 +185,14 @@ async function loadUserOrders() {
             return;
         }
 
-        if (!res.ok) throw new Error("فشل تحميل طلبات النشر");
+        if (!res.ok) throw new Error("فشل تحميل قائمة التطبيقات");
 
-        const orders = await res.json();
+        const apps = await res.json();
         
-        if (orders.length === 0) {
+        if (apps.length === 0) {
             statusEl.innerHTML = `
                 <div class="empty-dashboard-state">
-                    <p>لم تقم بتقديم أي طلبات نشر بعد.</p>
+                    <p>لم تقم بتقديم أي تطبيقات بعد.</p>
                     <a href="order.html" class="btn btn-primary">اضغط هنا لرفع تطبيقك الأول 🚀</a>
                 </div>
             `;
@@ -227,194 +200,83 @@ async function loadUserOrders() {
         }
 
         statusEl.style.display = 'none';
-        listEl.style.display = 'flex';
-        listEl.style.flexDirection = 'column';
+        listEl.style.display = 'grid';
 
-        // 1. Group orders by app_title
-        const appGroups = {};
-        orders.forEach(order => {
-            const title = order.app_title;
-            if (!appGroups[title]) {
-                appGroups[title] = [];
-            }
-            appGroups[title].push(order);
-        });
-
-        // 2. Render each group as an accordion
-        Object.keys(appGroups).forEach(appTitle => {
-            const groupOrders = appGroups[appTitle];
-            // Sort by id descending (newest version first)
-            groupOrders.sort((a, b) => b.id - a.id);
+        apps.forEach(app => {
+            const card = document.createElement('div');
+            card.className = 'app-card';
+            card.onclick = () => {
+                window.location.href = `app_details.html?id=${app.id}`;
+            };
             
-            const latestOrder = groupOrders[0];
-            const accordion = document.createElement('div');
-            accordion.className = 'app-accordion';
-            
-            // Latest status badge
-            let latestStatusBadge = '';
-            if (latestOrder.status === 'pending') {
-                latestStatusBadge = '<span class="badge-status badge-pending">قيد المراجعة</span>';
-            } else if (latestOrder.status === 'published') {
-                latestStatusBadge = '<span class="badge-status badge-published">بانتظار السداد</span>';
-            } else if (latestOrder.status === 'paid') {
-                latestStatusBadge = '<span class="badge-status badge-paid">نشط ومنشور</span>';
-            } else if (latestOrder.status === 'deleted') {
-                latestStatusBadge = '<span class="badge-status badge-deleted">محذوف</span>';
+            // Icon
+            let iconHtml = '<div class="app-card-icon">📱</div>';
+            if (app.icon_path) {
+                const iconUrl = `${API_BASE}/api/apps/${app.id}/download/icon`;
+                iconHtml = `<img src="" data-src="${iconUrl}" class="app-card-icon lazy-icon" alt="${app.title}">`;
             }
 
-            // Build accordion header
-            const headerDiv = document.createElement('div');
-            headerDiv.className = 'app-accordion-header';
-            headerDiv.innerHTML = `
-                <div class="app-accordion-title-sec">
-                    <span class="app-accordion-icon">📱</span>
-                    <div>
-                        <h3 class="app-accordion-name">${appTitle}</h3>
-                        <span class="app-category-badge">${latestOrder.app_category || 'تطبيق منشور'}</span>
+            // Plan translation
+            let planText = app.plan_selection;
+            if (app.plan_selection === 'basic') planText = 'الباقة الأساسية';
+            else if (app.plan_selection === 'pro') planText = 'الباقة الاحترافية';
+            else if (app.plan_selection === 'lifetime') planText = 'باقة مدى الحياة';
+            else if (app.plan_selection === 'update') planText = 'تحديث';
+
+            card.innerHTML = `
+                <div class="app-card-header">
+                    ${iconHtml}
+                    <div class="app-card-info">
+                        <h3 class="app-card-title">${app.title}</h3>
+                        <span class="app-card-category">${app.category}</span>
                     </div>
                 </div>
-                <div class="app-accordion-actions">
-                    <span style="font-weight: 800; font-size: 0.9rem; color: var(--text-light);">
-                        آخر إصدار: ${latestOrder.app_version || '1.0.0'}
-                    </span>
-                    ${latestStatusBadge}
-                    <button class="btn btn-primary nav-btn" style="padding: 6px 14px; font-size: 0.85rem;" 
-                            onclick="event.stopPropagation(); window.location.href='order.html?plan=update&app=${encodeURIComponent(appTitle)}'">
-                        رفع تحديث جديد 🚀
-                    </button>
-                    <span class="app-accordion-toggle-indicator">▼</span>
+                <div class="app-card-body">
+                    ${app.short_desc || 'لا يوجد وصف قصير لهذا التطبيق.'}
+                </div>
+                <div class="app-card-footer">
+                    <span class="app-card-plan">${planText}</span>
+                    <span style="font-size: 0.85rem; color: var(--text-light); font-weight: 700;">التفاصيل ➔</span>
                 </div>
             `;
-
-            // Toggle accordion expand/collapse
-            headerDiv.addEventListener('click', () => {
-                accordion.classList.toggle('active');
-            });
-
-            // Build accordion body (version timeline)
-            const bodyDiv = document.createElement('div');
-            bodyDiv.className = 'app-accordion-body';
             
-            const logList = document.createElement('div');
-            logList.className = 'version-log-list';
-
-            groupOrders.forEach(order => {
-                const verItem = document.createElement('div');
-                verItem.className = 'version-item';
-
-                const date = new Date(order.created_at);
-                const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
-
-                // Status badge for this specific version
-                let verStatusBadge = '';
-                let deadlineHtml = '';
-                if (order.status === 'pending') {
-                    verStatusBadge = '<span class="badge-status badge-pending">بانتظار البدء والمراجعة</span>';
-                } else if (order.status === 'published') {
-                    verStatusBadge = '<span class="badge-status badge-published">تم النشر (غير مدفوع)</span>';
-                    
-                    const deadline = new Date(order.payment_deadline);
-                    const now = new Date();
-                    const daysLeft = Math.ceil((deadline - now) / (1000 * 3600 * 24));
-                    
-                    if (daysLeft > 0) {
-                        deadlineHtml = `
-                            <div class="deadline-box deadline-active" style="margin-top: 10px;">
-                                ⚠️ تم النشر بنجاح! يرجى سداد التكلفة عبر InstaPay خلال ${daysLeft} أيام لتفادي الإيقاف.
-                            </div>
-                        `;
-                    } else {
-                        deadlineHtml = `
-                            <div class="deadline-box deadline-overdue" style="margin-top: 10px;">
-                                🚨 متأخر عن السداد! يرجى تحويل التكلفة فوراً لتفادي حذف التطبيق.
-                            </div>
-                        `;
-                    }
-                } else if (order.status === 'paid') {
-                    verStatusBadge = '<span class="badge-status badge-paid">تم السداد ونشط بالمتجر</span>';
-                } else if (order.status === 'deleted') {
-                    verStatusBadge = '<span class="badge-status badge-deleted">تم حذف الإصدار</span>';
-                }
-
-                // Changelog html (for updates)
-                let changelogHtml = '';
-                if (order.plan_selection === 'update' && order.changelog) {
-                    changelogHtml = `
-                        <div class="changelog-box">
-                            <div class="changelog-title">📋 التغييرات في هذا الإصدار:</div>
-                            <div style="line-height: 1.5;">${order.changelog}</div>
-                        </div>
-                    `;
-                }
-
-                // Admin notes
-                let notesHtml = '';
-                if (order.admin_notes && order.admin_notes.trim() !== '') {
-                    notesHtml = `
-                        <div class="admin-notes-box" style="margin-top: 12px;">
-                            <div class="admin-notes-title">💬 رسالة من المشرف:</div>
-                            <div class="admin-notes-content">${order.admin_notes}</div>
-                        </div>
-                    `;
-                }
-
-                // Plan display name
-                let planDisp = order.plan_selection;
-                if (order.plan_selection === 'basic') planDisp = 'الباقة الأساسية';
-                else if (order.plan_selection === 'pro') planDisp = 'الباقة الاحترافية';
-                else if (order.plan_selection === 'lifetime') planDisp = 'باقة مدى الحياة';
-                else if (order.plan_selection === 'update') planDisp = 'تحديث إصدار';
-
-                verItem.innerHTML = `
-                    <div class="version-item-header">
-                        <div>
-                            <span class="version-name-tag">إصدار نسخة: ${order.app_version || '1.0.0'}</span>
-                            <span style="color: var(--text-light); margin-right: 15px; font-size: 0.85rem;">(${planDisp})</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 10px;">
-                            ${verStatusBadge}
-                            ${order.status === 'pending' ? `
-                            <button
-                                onclick="deleteOrder(${order.id}, '${appTitle.replace(/'/g, "\\'").replace(/"/g, '&quot;')}', '${(order.app_version || '1.0.0').replace(/'/g, "\\'")}')"
-                                style="background: #fff0f0; color: #dc2626; border: 2px solid #dc2626; border-radius: 6px; padding: 5px 12px; font-weight: 800; font-size: 0.8rem; cursor: pointer; font-family: inherit;"
-                                onmouseover="this.style.background='#dc2626';this.style.color='#fff'"
-                                onmouseout="this.style.background='#fff0f0';this.style.color='#dc2626'">
-                                🗑️ حذف الطلب
-                            </button>` : ''}
-                        </div>
-                    </div>
-                    
-                    <div class="order-meta-grid" style="grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
-                        <div class="meta-item">
-                            <span class="meta-label">تاريخ الطلب</span>
-                            <span class="meta-value" style="font-size: 0.95rem;">${formattedDate}</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">التكلفة</span>
-                            <span class="meta-value" style="color: var(--success); font-size: 0.95rem;">${order.total_price} ج.م</span>
-                        </div>
-                        <div class="meta-item">
-                            <span class="meta-label">معرف الطلب (ID)</span>
-                            <span class="meta-value" style="font-size: 0.95rem;">#${order.id}</span>
-                        </div>
-                    </div>
-
-                    ${changelogHtml}
-                    ${deadlineHtml}
-                    ${notesHtml}
-                `;
-
-                logList.appendChild(verItem);
-            });
-
-            bodyDiv.appendChild(logList);
-            accordion.appendChild(headerDiv);
-            accordion.appendChild(bodyDiv);
-            listEl.appendChild(accordion);
+            listEl.appendChild(card);
         });
+
+        // Lazy load icons with Auth header
+        lazyLoadIcons();
 
     } catch (err) {
         console.error(err);
-        statusEl.innerHTML = `<div class="error-message" style="padding: 2rem;">حدث خطأ أثناء جلب طلباتك: ${err.message}</div>`;
+        statusEl.innerHTML = `<div class="error-message" style="padding: 2rem;">حدث خطأ أثناء جلب تطبيقاتك: ${err.message}</div>`;
     }
+}
+
+function lazyLoadIcons() {
+    const icons = document.querySelectorAll('.lazy-icon');
+    icons.forEach(img => {
+        const src = img.getAttribute('data-src');
+        if (!src) return;
+        fetch(src, {
+            headers: { 'Authorization': `Bearer ${userToken}` }
+        })
+        .then(res => {
+            if (!res.ok) throw new Error();
+            return res.blob();
+        })
+        .then(blob => {
+            const objectURL = URL.createObjectURL(blob);
+            img.src = objectURL;
+        })
+        .catch(() => {
+            // Fallback to text icon if load fails
+            const parent = img.parentNode;
+            if (parent) {
+                const placeholder = document.createElement('div');
+                placeholder.className = 'app-card-icon';
+                placeholder.textContent = '📱';
+                parent.replaceChild(placeholder, img);
+            }
+        });
+    });
 }

@@ -430,3 +430,103 @@
     color: #b45309;
     margin-bottom: 4px;
 }
+
+/* Apps Grid and App Cards */
+.apps-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 25px;
+    margin-top: 20px;
+}
+
+.app-card {
+    background-color: var(--card-bg);
+    border: var(--border-main);
+    border-radius: 12px;
+    padding: 25px;
+    box-shadow: var(--shadow-flat);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.app-card:hover {
+    transform: translate(-4px, -4px);
+    box-shadow: var(--shadow-flat-lg);
+}
+
+.app-card-header {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    border-bottom: 2px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.app-card-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 10px;
+    border: 2px solid var(--border-color);
+    box-shadow: 2px 2px 0px var(--border-color);
+    object-fit: cover;
+    background-color: #f1f5f9;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+}
+
+.app-card-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.app-card-title {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.app-card-category {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-light);
+}
+
+.app-card-body {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--text-light);
+    font-weight: 600;
+    height: 60px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+}
+
+.app-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #cbd5e1;
+    padding-top: 15px;
+    margin-top: auto;
+}
+
+.app-card-plan {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--primary);
+    background-color: #f5f3ff;
+    padding: 4px 10px;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+

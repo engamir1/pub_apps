@@ -7,7 +7,7 @@ import asyncio
 from datetime import datetime
 from .database import get_mongodb_client
 from .services.email_service import send_payment_reminder_email
-from .routers import orders
+from .routers import orders, apps
 from .config import settings
 
 
@@ -23,8 +23,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Register orders API router
+# Register orders and apps API routers
 app.include_router(orders.router)
+app.include_router(apps.router)
 
 # Resolve parent root directory of static frontend assets
 ROOT_DIR = os.path.abspath(
@@ -52,8 +53,28 @@ def serve_policies():
 def serve_order():
     return FileResponse(os.path.join(ROOT_DIR, "order.html"))
 
+@app.get("/dashboard.html")
+def serve_dashboard():
+    return FileResponse(os.path.join(ROOT_DIR, "dashboard.html"))
+
+@app.get("/dashboard")
+def serve_dashboard_alt():
+    return FileResponse(os.path.join(ROOT_DIR, "dashboard.html"))
+
+@app.get("/app_details.html")
+def serve_app_details():
+    return FileResponse(os.path.join(ROOT_DIR, "app_details.html"))
+
+@app.get("/app_details")
+def serve_app_details_alt():
+    return FileResponse(os.path.join(ROOT_DIR, "app_details.html"))
+
 @app.get("/admin")
 def serve_admin():
+    return FileResponse(os.path.join(ROOT_DIR, "admin.html"))
+
+@app.get("/admin.html")
+def serve_admin_html():
     return FileResponse(os.path.join(ROOT_DIR, "admin.html"))
 
 @app.get("/api/config/google-client-id")

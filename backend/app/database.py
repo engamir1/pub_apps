@@ -8,7 +8,7 @@ def get_mongodb_client():
     global client, db
     if client is None:
         uri = settings.MONGODB_URI
-        client = MongoClient(uri)
+        client = MongoClient(uri, serverSelectionTimeoutMS=5000, connectTimeoutMS=5000, readPreference="secondaryPreferred")
         
         # Extract database name from connection string if present, fallback to "pub_apps"
         db_name = "pub_apps"

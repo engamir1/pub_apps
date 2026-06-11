@@ -33,6 +33,7 @@ class OrderBase(BaseModel):
 
 class OrderResponse(OrderBase):
     id: int
+    app_id: Optional[int] = None
     user_id: Optional[int] = None
     icon_path: Optional[str] = None
     feature_path: Optional[str] = None
@@ -41,6 +42,7 @@ class OrderResponse(OrderBase):
     status: str
     published_at: Optional[datetime] = None
     payment_deadline: Optional[datetime] = None
+    paid_at: Optional[datetime] = None
     reminder_sent: bool
     admin_notes: Optional[str] = None
     created_at: datetime
@@ -58,3 +60,47 @@ class OrderResponse(OrderBase):
             except Exception:
                 return []
         return v or []
+
+
+class AppResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    category: str
+    short_desc: str
+    long_desc: str
+    privacy_link: Optional[str] = None
+    icon_path: Optional[str] = None
+    feature_path: Optional[str] = None
+    screenshots_paths: List[str] = []
+    plan_selection: str
+    created_at: datetime
+    updated_at: datetime
+
+    class Config:
+        from_attributes = True
+
+    @field_validator('screenshots_paths', mode='before')
+    @classmethod
+    def decode_screenshots(cls, v):
+        if isinstance(v, str):
+            try:
+                return json.loads(v)
+            except Exception:
+                return []
+        return v or []
+
+
+class MessageResponse(BaseModel):
+    id: int
+    app_id: int
+    sender_id: int
+    sender_name: str
+    sender_role: str
+    content: str
+    created_at: datetime
+    read_by_recipient: bool
+
+    class Config:
+        from_attributes = True
+

@@ -335,6 +335,10 @@ async def update_order_status(
             "payment_deadline": payment_deadline,
             "reminder_sent": False
         })
+    elif new_status == "paid":
+        update_fields.update({
+            "paid_at": datetime.utcnow()
+        })
         
         # Trigger publish email in background
         order_dict = {

@@ -89,15 +89,20 @@
             </button>
         </div>
 
-        <h2 class="dashboard-subtitle-sec">تطبيقاتي المرفوعة</h2>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px;">
+            <h2 class="dashboard-subtitle-sec" style="margin-bottom: 0;">تطبيقاتي المرفوعة</h2>
+            <a href="order.html" class="btn btn-primary" style="padding: 10px 20px; font-weight: 800; font-size: 0.95rem; font-family: inherit;">
+                ➕ إضافة تطبيق جديد
+            </a>
+        </div>
 
         <div id="dashboardStatus" class="status-container">
             <div class="loading-spinner"></div>
-            جاري تحميل طلباتك...
+            جاري تحميل تطبيقاتك...
         </div>
 
-        <div class="orders-list" id="ordersList" style="display: none;">
-            <!-- Dynamic order cards injected here -->
+        <div class="apps-grid" id="appsList" style="display: none;">
+            <!-- Dynamic app cards injected here -->
         </div>
     </div>
 

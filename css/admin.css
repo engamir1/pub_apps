@@ -54,45 +54,367 @@
     box-shadow: var(--shadow-flat-sm);
 }
 
-/* Table card layout */
 .table-card {
+    margin-bottom: 40px;
+}
+
+/* Cards Container and Grid Layout */
+.orders-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding: 10px 0;
+}
+
+.order-card-middle {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+@media (min-width: 850px) {
+    .order-card-middle {
+        flex-direction: row;
+    }
+}
+
+/* Order Card */
+.order-card {
     background-color: var(--card-bg);
     border: var(--border-main);
     border-radius: 12px;
     box-shadow: var(--shadow-flat);
-    margin-bottom: 40px;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
 }
 
-.table-responsive {
-    overflow-x: auto;
+.order-card:hover {
+    transform: translate(-3px, -3px);
+    box-shadow: var(--shadow-flat-lg);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: right;
+/* Card Header */
+.order-card-header {
+    background-color: #f8fafc;
+    border-bottom: 3px solid var(--border-color);
+    padding: 16px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
-th {
-    background-color: #f1f5f9;
-    padding: 16px 14px;
+.order-card-id-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.order-id {
+    font-size: 1.15rem;
     font-weight: 800;
     color: var(--text-dark);
-    border-bottom: 3px solid var(--border-color);
-    font-size: 0.95rem;
 }
 
-td {
-    padding: 16px 14px;
-    border-bottom: 2px solid var(--border-color);
-    font-size: 0.95rem;
-    vertical-align: middle;
+.order-date {
+    font-size: 0.85rem;
+    color: var(--text-light);
+    font-weight: 700;
+}
+
+/* Card Body Section */
+.order-card-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    flex: 1;
+}
+
+/* App Info Row */
+.app-info-row {
+    border-bottom: 2px dashed #cbd5e1;
+    padding-bottom: 14px;
+}
+
+.app-title-link {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--primary-hover);
+    text-decoration: underline;
+    display: block;
+    margin-bottom: 6px;
+}
+
+.app-title-static {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.app-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.app-category-badge {
+    background: #f1f5f9;
+    border: 1.5px solid var(--border-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.app-version-badge {
+    background: #eff6ff;
+    color: #1d4ed8;
+    border: 1.5px solid var(--border-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.app-plan-badge {
+    background: #fdf2f8;
+    color: #db2777;
+    border: 1.5px solid var(--border-color);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 800;
+    display: inline-block;
+}
+
+.changelog-box {
+    font-size: 0.85rem;
+    background: #fffbeb;
+    border: 2px solid #b45309;
+    padding: 10px;
+    border-radius: 6px;
+    color: #92400e;
+    line-height: 1.5;
+    margin-top: 8px;
+    box-shadow: 2px 2px 0px #b45309;
+}
+
+/* Client Details Section */
+.client-info-row {
+    border-bottom: 2px dashed #cbd5e1;
+    padding-bottom: 14px;
+}
+
+.client-name {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 10px;
+}
+
+.client-contacts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.contact-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    font-size: 0.85rem;
+    font-weight: 800;
+    background: white;
+    box-shadow: 2px 2px 0 var(--border-color);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    text-decoration: none;
+}
+
+.contact-btn:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0 var(--border-color);
+}
+
+.contact-btn:active {
+    transform: translate(1px, 1px);
+    box-shadow: 1px 1px 0 var(--border-color);
+}
+
+.contact-whatsapp {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.contact-email {
+    background: #eff6ff;
+    color: #1e40af;
+}
+
+.contact-phone {
+    background: #f8fafc;
     color: var(--text-dark);
 }
 
-tbody tr:hover {
+/* Price & Status Section */
+.price-status-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed #cbd5e1;
+    padding-bottom: 14px;
+}
+
+.price-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.price-label {
+    font-size: 0.8rem;
+    color: var(--text-light);
+    font-weight: 800;
+}
+
+.price-amount {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.status-deadline-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+}
+
+/* Files Attachments Section */
+.files-row {
+    border-bottom: 2px dashed #cbd5e1;
+    padding-bottom: 14px;
+}
+
+.files-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.files-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Feedback / Notes Section */
+.notes-row {
+    margin-bottom: 5px;
+}
+
+.notes-label {
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin-bottom: 6px;
+    display: block;
+}
+
+/* Controls / Actions Section */
+.card-actions-wrapper {
     background-color: #f8fafc;
+    border-top: 3px solid var(--border-color);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-sizing: border-box;
+}
+
+@media (min-width: 850px) {
+    .card-actions-wrapper {
+        width: 280px;
+        border-top: none;
+        border-right: 3px solid var(--border-color);
+        justify-content: center;
+    }
+}
+
+.card-actions-wrapper .btn-action {
+    width: 100%;
+    margin: 0;
+    padding: 10px 14px;
+    font-size: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    box-sizing: border-box;
+}
+
+.primary-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.primary-actions.single-action {
+    grid-template-columns: 1fr;
+}
+
+.secondary-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+}
+
+.danger-action {
+    width: 100%;
+}
+
+.btn-details {
+    background-color: #0f172a;
+    border-color: #0f172a;
+    color: white;
+}
+
+.btn-details:hover {
+    background-color: #1e293b;
+}
+
+.btn-chat {
+    background-color: #4f46e5;
+    border-color: #4338ca;
+    color: white;
+}
+
+.btn-chat:hover {
+    background-color: #3f37c9;
+}
+
+.btn-danger {
+    background-color: #b91c1c;
+    border-color: #991b1b;
+    color: white;
+}
+
+.btn-danger:hover {
+    background-color: #991b1b;
 }
 
 /* Custom Neo-Brutalist Badges for table */
@@ -297,4 +619,44 @@ tbody tr:hover {
 .error-message {
     color: var(--secondary-hover);
     font-weight: 700;
+}
+
+/* Admin Tabs Layout */
+.admin-tabs {
+    display: flex;
+    gap: 10px;
+    border-bottom: 3px solid var(--border-color);
+    padding-bottom: 0;
+    margin-top: 10px;
+    margin-bottom: 25px;
+    overflow-x: auto;
+}
+
+.admin-tab-btn {
+    background: none;
+    border: 3px solid transparent;
+    border-bottom: none;
+    padding: 12px 24px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--text-light);
+    cursor: pointer;
+    font-family: inherit;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    position: relative;
+    top: 3px;
+}
+
+.admin-tab-btn:hover {
+    color: var(--text-dark);
+}
+
+.admin-tab-btn.active {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+    color: var(--text-dark);
+    box-shadow: 3px -3px 0px rgba(0, 0, 0, 0.05);
 }

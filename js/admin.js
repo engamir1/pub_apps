@@ -141,10 +141,30 @@ async function logout() {
     showLogin();
 }
 
+let activeAdminTab = 'requests';
+let allOrders = [];
+
+function switchAdminTab(tabName) {
+    activeAdminTab = tabName;
+    const tabRequestsBtn = document.getElementById('tabRequestsBtn');
+    const tabPaymentsBtn = document.getElementById('tabPaymentsBtn');
+    
+    if (tabRequestsBtn && tabPaymentsBtn) {
+        if (tabName === 'requests') {
+            tabRequestsBtn.classList.add('active');
+            tabPaymentsBtn.classList.remove('active');
+        } else {
+            tabPaymentsBtn.classList.add('active');
+            tabRequestsBtn.classList.remove('active');
+        }
+    }
+    renderActiveTab();
+}
+
 async function loadOrders() {
     const statusEl = document.getElementById('tableStatus');
     const containerEl = document.getElementById('tableContainer');
-    const bodyEl = document.getElementById('ordersBody');
+    const bodyEl = document.getElementById('ordersGrid');
 
     statusEl.style.display = 'block';
     containerEl.style.display = 'none';
@@ -162,9 +182,9 @@ async function loadOrders() {
 
         if (!res.ok) throw new Error("فشل جلب قائمة الطلبات");
 
-        const orders = await res.json();
+        allOrders = await res.json();
         
-        if (orders.length === 0) {
+        if (allOrders.length === 0) {
             statusEl.innerHTML = '<div style="padding: 2rem;">لا توجد طلبات نشر حالية.</div>';
             return;
         }
@@ -172,116 +192,261 @@ async function loadOrders() {
         statusEl.style.display = 'none';
         containerEl.style.display = 'block';
 
-        orders.forEach(order => {
-            const tr = document.createElement('tr');
-            
-            // Format date
-            const date = new Date(order.created_at);
-            const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
-            
-            // Status badge
-            let statusBadge = '';
-            let deadlineHtml = '';
-            
-            if (order.status === 'pending') {
-                statusBadge = '<span class="badge-status badge-pending">بانتظار المراجعة</span>';
-            } else if (order.status === 'published') {
-                statusBadge = '<span class="badge-status badge-published">تم النشر (غير مدفوع)</span>';
-                
-                // Calculate remaining deadline time
-                const deadline = new Date(order.payment_deadline);
-                const now = new Date();
-                const timeDiff = deadline - now;
-                const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                
-                if (daysLeft > 0) {
-                    deadlineHtml = `<span class="deadline-text deadline-active">متبقي ${daysLeft} أيام للسداد</span>`;
-                } else {
-                    deadlineHtml = `<span class="deadline-text deadline-overdue">متأخر عن السداد! ⚠️</span>`;
-                }
-            } else if (order.status === 'paid') {
-                statusBadge = '<span class="badge-status badge-paid">تم السداد بنجاح</span>';
-            } else if (order.status === 'deleted') {
-                statusBadge = '<span class="badge-status badge-deleted">تم حذف التطبيق</span>';
-            }
-
-            // Files Column
-            let filesHtml = '';
-            if (order.icon_path) {
-                filesHtml += `<a href="/api/orders/${order.id}/download/icon" class="btn-file" target="_blank" onclick="appendToken(this, event)">أيقونة</a>`;
-            }
-            if (order.feature_path) {
-                filesHtml += `<a href="/api/orders/${order.id}/download/feature" class="btn-file" target="_blank" onclick="appendToken(this, event)">مميزة</a>`;
-            }
-            if (order.screenshots_paths && order.screenshots_paths.length > 0) {
-                order.screenshots_paths.forEach((_, idx) => {
-                    filesHtml += `<a href="/api/orders/${order.id}/download/screenshot_${idx + 1}" class="btn-file" target="_blank" onclick="appendToken(this, event)">لقطة ${idx + 1}</a>`;
-                });
-            }
-            if (order.aab_path) {
-                filesHtml += `<a href="/api/orders/${order.id}/download/aab" class="btn-file" target="_blank" onclick="appendToken(this, event)" style="background-color: var(--secondary); border-color: var(--secondary);">حزمة AAB</a>`;
-            }
-
-            // Actions Column
-            let actionsHtml = '<div style="display: flex; flex-direction: column; gap: 5px;">';
-            if (order.status === 'pending') {
-                actionsHtml += `<button class="btn-action btn-publish" onclick="updateStatus(${order.id}, 'published')">تم النشر بالمتجر</button>`;
-            } else if (order.status === 'published') {
-                actionsHtml += `<button class="btn-action btn-pay" onclick="updateStatus(${order.id}, 'paid')">تأكيد استلام الدفع</button>`;
-                actionsHtml += `<button class="btn-action btn-delete" onclick="updateStatus(${order.id}, 'deleted')">تعطيل التطبيق</button>`;
-            }
-            // Add permanent delete button always
-            actionsHtml += `<button class="btn-action btn-delete" style="background-color: #b91c1c; border-color: #991b1b; color: white;" onclick="deleteOrderPermanently(${order.id})">حذف نهائي 🗑️</button>`;
-            actionsHtml += '</div>';
-
-            // Notes Column (Admin Feedback edit area)
-            const notesText = order.admin_notes || '';
-            const notesHtml = `
-                <div style="display: flex; flex-direction: column;">
-                    <textarea id="notes-${order.id}" class="notes-textarea" placeholder="مثال: يرجى رفع صورة أيقونة بجودة أعلى...">${notesText}</textarea>
-                    <button class="btn-save-notes" onclick="saveNotes(${order.id})">حفظ الملاحظة</button>
-                </div>
-            `;
-
-            // Plan display name
-            let planDisp = order.plan_selection;
-            if (order.plan_selection === 'basic') planDisp = 'الباقة الأساسية';
-            else if (order.plan_selection === 'pro') planDisp = 'الباقة الاحترافية';
-            else if (order.plan_selection === 'lifetime') planDisp = 'باقة مدى الحياة';
-            else if (order.plan_selection === 'update') planDisp = 'تحديث إصدار 🚀';
-
-            tr.innerHTML = `
-                <td>#${order.id}</td>
-                <td>${formattedDate}</td>
-                <td>
-                    <strong>${order.dev_name}</strong><br>
-                    <small style="color: var(--text-secondary);">${order.dev_phone}</small><br>
-                    <small style="color: var(--text-secondary);">${order.dev_email}</small>
-                </td>
-                <td>
-                    <strong>${order.app_title}</strong><br>
-                    <small style="color: var(--text-secondary);">${order.app_category || 'وراثة من التطبيق الأب'}</small>
-                    ${order.plan_selection === 'update' ? `<br><small style="color: var(--secondary); font-weight: 800;">نسخة: ${order.app_version || '1.0.0'}</small>` : `<br><small style="color: var(--primary); font-weight: 800;">نسخة: ${order.app_version || '1.0.0'}</small>`}
-                    ${order.changelog ? `<br><div style="font-size: 0.8rem; background: #fffbeb; border: 1px solid #b45309; padding: 6px; border-radius: 4px; margin-top: 4px; color: #b45309; line-height: 1.4;"><strong>التغييرات:</strong> ${order.changelog}</div>` : ''}
-                </td>
-                <td>${planDisp}</td>
-                <td><strong>${order.total_price} ج.م</strong></td>
-                <td>
-                    ${statusBadge}
-                    ${deadlineHtml}
-                </td>
-                <td>${filesHtml || 'بدون ملفات'}</td>
-                <td>${notesHtml}</td>
-                <td>${actionsHtml}</td>
-            `;
-            
-            bodyEl.appendChild(tr);
-        });
+        renderActiveTab();
 
     } catch (err) {
         console.error(err);
         statusEl.innerHTML = `<div class="error-message" style="padding: 2rem;">حدث خطأ: ${err.message}</div>`;
     }
+}
+
+function renderActiveTab() {
+    const statusEl = document.getElementById('tableStatus');
+    const containerEl = document.getElementById('tableContainer');
+    const bodyEl = document.getElementById('ordersGrid');
+
+    bodyEl.innerHTML = '';
+
+    // Filter orders based on active tab
+    let filteredOrders = [];
+    if (activeAdminTab === 'requests') {
+        filteredOrders = allOrders.filter(order => order.status === 'pending' || order.status === 'published');
+    } else if (activeAdminTab === 'payments') {
+        filteredOrders = allOrders.filter(order => order.status === 'paid');
+    }
+
+    if (filteredOrders.length === 0) {
+        if (activeAdminTab === 'requests') {
+            bodyEl.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; font-weight: 800; color: var(--text-light); background: white; border: 3px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-flat);">
+                    📋 لا توجد طلبات معلقة أو قيد الانتظار حالياً.
+                </div>
+            `;
+        } else {
+            bodyEl.innerHTML = `
+                <div style="grid-column: 1 / -1; text-align: center; padding: 40px; font-weight: 800; color: var(--text-light); background: white; border: 3px solid var(--border-color); border-radius: 12px; box-shadow: var(--shadow-flat);">
+                    💸 لا توجد مدفوعات مستلمة أو مكتملة بعد.
+                </div>
+            `;
+        }
+        return;
+    }
+
+    // Prepend financial overview cards if payments tab is selected
+    if (activeAdminTab === 'payments') {
+        const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total_price || 0), 0);
+        const totalCount = filteredOrders.length;
+
+        const summaryCard = document.createElement('div');
+        summaryCard.style.gridColumn = '1 / -1';
+        summaryCard.style.display = 'grid';
+        summaryCard.style.gridTemplateColumns = 'repeat(auto-fit, minmax(280px, 1fr))';
+        summaryCard.style.gap = '20px';
+        summaryCard.style.marginBottom = '25px';
+
+        summaryCard.innerHTML = `
+            <div style="background: #ecfdf5; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: var(--shadow-flat-sm); display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 1rem; font-weight: 800; color: #065f46;">💰 إجمالي الإيرادات المحصلة</span>
+                <span style="font-size: 2.3rem; font-weight: 800; color: var(--text-dark);">${totalRevenue} ج.م</span>
+            </div>
+            <div style="background: #eff6ff; border: 3px solid var(--border-color); border-radius: 12px; padding: 25px; box-shadow: var(--shadow-flat-sm); display: flex; flex-direction: column; gap: 8px;">
+                <span style="font-size: 1rem; font-weight: 800; color: #1e40af;">✅ عمليات الدفع المؤكدة</span>
+                <span style="font-size: 2.3rem; font-weight: 800; color: var(--text-dark);">${totalCount} عملية</span>
+            </div>
+        `;
+        bodyEl.appendChild(summaryCard);
+    }
+
+    filteredOrders.forEach(order => {
+        const card = document.createElement('div');
+        card.className = 'order-card';
+
+        // Format date
+        const date = new Date(order.created_at);
+        const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
+
+        // Payment date (if paid)
+        let paymentDateHtml = '';
+        if (order.status === 'paid' && (order.paid_at || order.updated_at)) {
+            const payDate = new Date(order.paid_at || order.updated_at);
+            const formattedPayDate = payDate.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            paymentDateHtml = `<div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 800; margin-top: 5px;">📅 تأكيد الدفع: ${formattedPayDate}</div>`;
+        }
+
+        // Status badge
+        let statusBadge = '';
+        let deadlineHtml = '';
+
+        if (order.status === 'pending') {
+            statusBadge = '<span class="badge-status badge-pending">بانتظار المراجعة</span>';
+        } else if (order.status === 'published') {
+            statusBadge = '<span class="badge-status badge-published">تم النشر (غير مدفوع)</span>';
+
+            // Calculate remaining deadline time
+            const deadline = new Date(order.payment_deadline);
+            const now = new Date();
+            const timeDiff = deadline - now;
+            const daysLeft = Math.ceil(timeDiff / (1000 * 3600 * 24));
+
+            if (daysLeft > 0) {
+                deadlineHtml = `<span class="deadline-text deadline-active">متبقي ${daysLeft} أيام للسداد</span>`;
+            } else {
+                deadlineHtml = `<span class="deadline-text deadline-overdue">متأخر عن السداد! ⚠️</span>`;
+            }
+        } else if (order.status === 'paid') {
+            statusBadge = '<span class="badge-status badge-paid">تم السداد بنجاح</span>';
+        } else if (order.status === 'deleted') {
+            statusBadge = '<span class="badge-status badge-deleted">تم حذف التطبيق</span>';
+        }
+
+        // Files Column
+        let filesHtml = '';
+        if (order.icon_path) {
+            filesHtml += `<a href="/api/orders/${order.id}/download/icon" class="btn-file" target="_blank" onclick="appendToken(this, event)">🖼️ أيقونة</a>`;
+        }
+        if (order.feature_path) {
+            filesHtml += `<a href="/api/orders/${order.id}/download/feature" class="btn-file" target="_blank" onclick="appendToken(this, event)">🌟 مميزة</a>`;
+        }
+        if (order.screenshots_paths && order.screenshots_paths.length > 0) {
+            order.screenshots_paths.forEach((_, idx) => {
+                filesHtml += `<a href="/api/orders/${order.id}/download/screenshot_${idx + 1}" class="btn-file" target="_blank" onclick="appendToken(this, event)">📸 لقطة ${idx + 1}</a>`;
+            });
+        }
+        if (order.aab_path) {
+            filesHtml += `<a href="/api/orders/${order.id}/download/aab" class="btn-file" target="_blank" onclick="appendToken(this, event)" style="background-color: var(--secondary); border-color: var(--secondary); color: white;">📦 حزمة AAB</a>`;
+        }
+
+        // Primary actions based on status
+        let primaryActionsHtml = '';
+        if (order.status === 'pending') {
+            primaryActionsHtml = `<button class="btn-action btn-publish" onclick="updateStatus(${order.id}, 'published')">🚀 اعتماد ونشر بالمتجر</button>`;
+        } else if (order.status === 'published') {
+            primaryActionsHtml = `
+                <button class="btn-action btn-pay" onclick="updateStatus(${order.id}, 'paid')">💸 تأكيد استلام الدفع</button>
+                <button class="btn-action btn-delete" onclick="updateStatus(${order.id}, 'deleted')">🛑 تعطيل التطبيق</button>
+            `;
+        }
+
+        // Notes Column (Admin Feedback edit area)
+        const notesText = order.admin_notes || '';
+        const notesHtml = `
+            <div style="display: flex; flex-direction: column; gap: 8px; width: 100%;">
+                <textarea id="notes-${order.id}" class="notes-textarea" placeholder="مثال: يرجى رفع صورة أيقونة بجودة أعلى...">${notesText}</textarea>
+                <button class="btn-save-notes" onclick="saveNotes(${order.id})">حفظ الملاحظة 💾</button>
+            </div>
+        `;
+
+        // Plan display name
+        let planDisp = order.plan_selection;
+        if (order.plan_selection === 'basic') planDisp = 'الباقة الأساسية';
+        else if (order.plan_selection === 'pro') planDisp = 'الباقة الاحترافية';
+        else if (order.plan_selection === 'lifetime') planDisp = 'باقة مدى الحياة';
+        else if (order.plan_selection === 'update') planDisp = 'تحديث إصدار 🚀';
+
+        // Clickable App Title for Admin
+        let appTitleHtml = '';
+        if (order.app_id) {
+            appTitleHtml = `<a href="app_details.html?id=${order.app_id}" target="_blank" class="app-title-link" title="عرض تفاصيل التطبيق والتحديثات بالكامل">${order.app_title}</a>`;
+        } else {
+            appTitleHtml = `<span class="app-title-static">${order.app_title}</span>`;
+        }
+
+        card.innerHTML = `
+            <!-- Header -->
+            <div class="order-card-header">
+                <div class="order-card-id-wrapper">
+                    <span class="order-id">طلب #${order.id}</span>
+                    <span class="order-date">${formattedDate}</span>
+                </div>
+                <div class="status-deadline-box">
+                    ${statusBadge}
+                    ${deadlineHtml}
+                    ${paymentDateHtml}
+                </div>
+            </div>
+
+            <!-- Body -->
+            <div class="order-card-middle">
+                <div class="order-card-body">
+                    <!-- App Info -->
+                    <div class="app-info-row">
+                        ${appTitleHtml}
+                        <div class="app-meta">
+                            <span class="app-category-badge">📂 ${order.app_category || 'وراثة من التطبيق الأب'}</span>
+                            <span class="app-plan-badge">💎 ${planDisp}</span>
+                            ${order.plan_selection === 'update' ? `<span class="app-version-badge" style="background: #fff1f2; color: var(--secondary);">نسخة: ${order.app_version || '1.0.0'}</span>` : `<span class="app-version-badge">نسخة: ${order.app_version || '1.0.0'}</span>`}
+                        </div>
+                        ${order.changelog ? `<div class="changelog-box"><strong>📝 التغييرات الجديدة:</strong><br>${order.changelog}</div>` : ''}
+                    </div>
+
+                    <!-- Client Info -->
+                    <div class="client-info-row">
+                        <div class="client-name">👤 العميل: ${order.dev_name}</div>
+                        <div class="client-contacts">
+                            <a href="https://wa.me/${order.dev_phone.replace(/[+\s]/g, '')}" target="_blank" class="contact-btn contact-whatsapp" title="تواصل عبر واتساب">
+                                💬 واتساب
+                            </a>
+                            <a href="mailto:${order.dev_email}" class="contact-btn contact-email" title="تراسل بالبريد">
+                                ✉️ البريد الإلكتروني
+                            </a>
+                            <a href="tel:${order.dev_phone}" class="contact-btn contact-phone" title="اتصال هاتفي">
+                                📞 ${order.dev_phone}
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="price-status-row">
+                        <div class="price-box">
+                            <span class="price-label">السعر المستحق</span>
+                            <span class="price-amount">${order.total_price} ج.م</span>
+                        </div>
+                    </div>
+
+                    <!-- Attached Files -->
+                    <div class="files-row">
+                        <span class="files-label">📎 الملفات المرفقة:</span>
+                        <div class="files-list">
+                            ${filesHtml || '<span style="color: var(--text-light); font-size: 0.85rem; font-weight:700;">لا توجد ملفات مرفقة</span>'}
+                        </div>
+                    </div>
+
+                    <!-- Notes -->
+                    <div class="notes-row">
+                        <span class="notes-label">📢 ملاحظات وتنبيهات العميل:</span>
+                        ${notesHtml}
+                    </div>
+                </div>
+
+                <!-- Actions Footer -->
+                <div class="card-actions-wrapper">
+                    <!-- Status specific actions (Primary) -->
+                    ${primaryActionsHtml ? `<div class="primary-actions ${order.status === 'pending' ? 'single-action' : ''}">${primaryActionsHtml}</div>` : ''}
+                    
+                    <!-- App details and chat (Secondary) -->
+                    <div class="secondary-actions">
+                        ${order.app_id ? `
+                            <a href="app_details.html?id=${order.app_id}" class="btn-action btn-details" target="_blank">
+                                📱 تفاصيل التطبيق
+                            </a>
+                            <button class="btn-action btn-chat" onclick="openAdminChat(${order.app_id}, '${order.app_title.replace(/'/g, "\\'")}')">
+                                💬 شات الدعم
+                            </button>
+                        ` : '<span style="color: var(--text-light); font-size: 0.8rem; text-align: center; grid-column: span 2; font-weight:700;">طلب قديم غير مرتبط بتطبيق</span>'}
+                    </div>
+
+                    <!-- Delete action -->
+                    <div class="danger-action">
+                        <button class="btn-action btn-danger" onclick="deleteOrderPermanently(${order.id})">
+                            🗑️ حذف نهائي للطلب
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        bodyEl.appendChild(card);
+    });
 }
 
 // Appends the JWT token to URL for file download requests
@@ -395,5 +560,134 @@ async function deleteOrderPermanently(orderId) {
     } catch (err) {
         console.error(err);
         alert("خطأ: " + err.message);
+    }
+}
+
+// ------------------ ADMIN CHAT LOGIC (Stage 5) ------------------
+
+let currentChatAppId = null;
+let adminChatInterval = null;
+
+function openAdminChat(appId, appTitle) {
+    if (!appId) {
+        alert("هذا الطلب قديم وغير مرتبط بتطبيق حالي.");
+        return;
+    }
+    currentChatAppId = appId;
+    document.getElementById('adminChatTitle').textContent = `شات دعم التطبيق: ${appTitle}`;
+    document.getElementById('adminChatModal').style.display = 'flex';
+    fetchAdminChatMessages();
+    
+    if (!adminChatInterval) {
+        adminChatInterval = setInterval(fetchAdminChatMessages, 5000);
+    }
+}
+
+function closeAdminChat() {
+    document.getElementById('adminChatModal').style.display = 'none';
+    currentChatAppId = null;
+    if (adminChatInterval) {
+        clearInterval(adminChatInterval);
+        adminChatInterval = null;
+    }
+}
+
+async function fetchAdminChatMessages() {
+    if (!currentChatAppId) return;
+    const chatContainer = document.getElementById('adminChatMessages');
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/apps/${currentChatAppId}/messages`, {
+            headers: { 'Authorization': `Bearer ${adminToken}` }
+        });
+        
+        if (!res.ok) throw new Error();
+        const messages = await res.json();
+        
+        if (messages.length === 0) {
+            chatContainer.innerHTML = `
+                <div style="text-align: center; color: var(--text-light); padding: 40px; font-weight:700;">
+                    لا توجد رسائل سابقة في هذا الشات.
+                </div>
+            `;
+            return;
+        }
+
+        const isAtBottom = chatContainer.scrollHeight - chatContainer.clientHeight <= chatContainer.scrollTop + 50;
+        chatContainer.innerHTML = '';
+        
+        messages.forEach(msg => {
+            const bubble = document.createElement('div');
+            const isAdmin = msg.sender_role === 'admin';
+            
+            // Stylings
+            bubble.style.border = '2px solid var(--border-color)';
+            bubble.style.boxShadow = '2px 2px 0px var(--border-color)';
+            bubble.style.borderRadius = '10px';
+            bubble.style.padding = '12px 16px';
+            bubble.style.maxWidth = '75%';
+            bubble.style.fontWeight = '600';
+            bubble.style.fontSize = '0.95rem';
+            bubble.style.lineHeight = '1.5';
+            
+            if (isAdmin) {
+                // Sent by admin -> align right (sent style)
+                bubble.style.alignSelf = 'flex-start';
+                bubble.style.backgroundColor = '#e0e7ff';
+                bubble.style.borderTopLeftRadius = '0';
+            } else {
+                // Sent by user -> align left (received style)
+                bubble.style.alignSelf = 'flex-end';
+                bubble.style.backgroundColor = '#ffffff';
+                bubble.style.borderTopRightRadius = '0';
+            }
+            
+            const date = new Date(msg.created_at);
+            const timeStr = date.toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+            
+            bubble.innerHTML = `
+                <div class="chat-message-content">${msg.content}</div>
+                <div class="chat-message-meta" style="display: flex; justify-content: space-between; align-items: center; gap: 10px; font-size: 0.75rem; color: var(--text-light); margin-top: 6px; font-weight: 700;">
+                    <span class="chat-sender-name" style="${isAdmin ? 'color:#4f46e5; font-weight:800;' : 'color:#10b981; font-weight:800;'}">${msg.sender_name}</span>
+                    <span>${timeStr}</span>
+                </div>
+            `;
+            
+            chatContainer.appendChild(bubble);
+        });
+
+        if (isAtBottom || chatContainer.children.length <= messages.length) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+    } catch (e) {
+        console.error(e);
+    }
+}
+
+async function handleSendAdminChat(event) {
+    event.preventDefault();
+    if (!currentChatAppId) return;
+    
+    const inputEl = document.getElementById('txtAdminChatInput');
+    const content = inputEl.value.trim();
+    if (!content) return;
+    
+    inputEl.value = '';
+    
+    try {
+        const res = await fetch(`${API_BASE}/api/apps/${currentChatAppId}/messages`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${adminToken}`
+            },
+            body: JSON.stringify({ content: content })
+        });
+        
+        if (!res.ok) throw new Error("فشل إرسال الرسالة");
+        fetchAdminChatMessages();
+    } catch (err) {
+        console.error(err);
+        alert(err.message);
     }
 }
