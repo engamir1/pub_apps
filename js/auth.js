@@ -40,7 +40,7 @@ const AuthService = {
      * @param {'signin'|'signup'} mode 
      * @returns {Promise<{accessToken: string, role: string}>}
      */
-    async signInOrSignUpWithEmail(email, password, mode) {
+    async signInOrSignUpWithEmail(email, password, mode, name = null, phone = null) {
         let userCredential;
         if (mode === 'signup') {
             userCredential = await firebase.auth().createUserWithEmailAndPassword(email, password);
@@ -48,19 +48,25 @@ const AuthService = {
             userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
         }
         const idToken = await userCredential.user.getIdToken();
-        return await this.verifyWithBackend(idToken);
+        return await this.verifyWithBackend(idToken, name, phone);
     },
 
     /**
      * Verifies the Firebase ID Token with our FastAPI backend.
      * @param {string} idToken 
+     * @param {string|null} name
+     * @param {string|null} phone
      * @returns {Promise<{accessToken: string, role: string}>}
      */
-    async verifyWithBackend(idToken) {
+    async verifyWithBackend(idToken, name = null, phone = null) {
         const res = await fetch(`${API_BASE}/api/orders/admin-login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id_token: idToken })
+            body: JSON.stringify({
+                id_token: idToken,
+                name: name,
+                phone: phone
+            })
         });
 
         if (!res.ok) {

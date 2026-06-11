@@ -6,7 +6,7 @@ import os
 import json
 from typing import List, Optional
 from ..database import get_db, get_next_sequence_value
-from ..schemas import AppResponse, OrderResponse, MessageResponse
+from ..schemas import AppResponse, OrderResponse, MessageResponse, NotificationResponse
 from ..services.file_service import save_file
 from ..services.email_service import send_order_notification_email
 from .orders import verify_jwt, clean_doc, clean_docs
@@ -112,6 +112,15 @@ async def create_app(
         "created_at": datetime.utcnow()
     }
     db.orders.insert_one(order_doc)
+
+    # Trigger admin notification
+    create_notification(
+        db=db,
+        user_id=999,
+        title="🆕 تطبيق جديد بانتظار المراجعة",
+        content=f"قام المطور '{dev_name}' برفع تطبيق جديد بعنوان '{title}' للبدء في نشره بالمتجر.",
+        link=f"app_details.html?id={app_id}"
+    )
 
     # Queue administrative email notification
     background_tasks.add_task(send_order_notification_email, order_doc)
@@ -304,6 +313,15 @@ async def upload_version(
     }
     db.orders.insert_one(order_doc)
     
+    # Trigger admin notification for update
+    create_notification(
+        db=db,
+        user_id=999,
+        title="🚀 تحديث جديد للتطبيق",
+        content=f"قام المطور '{dev_name}' برفع تحديث جديد (إصدار: {app_version}) للتطبيق '{app_doc.get('title')}' للبدء في نشره بالمتجر.",
+        link=f"app_details.html?id={app_id}"
+    )
+
     # Send email notification
     background_tasks.add_task(send_order_notification_email, order_doc)
     
@@ -351,9 +369,15 @@ def send_message(
     message_id = get_next_sequence_value("message_id")
     
     # Determine display name
-    sender_name = current_user.get("name") or current_user.get("email").split("@")[0]
+    sender_name = None
     if current_user["role"] == "admin":
         sender_name = "الدعم الفني (المشرف)"
+    else:
+        user_doc = db.users.find_one({"id": current_user["id"]})
+        if user_doc:
+            sender_name = user_doc.get("name")
+        if not sender_name:
+            sender_name = current_user.get("email").split("@")[0]
         
     msg_doc = {
         "id": message_id,
@@ -367,4 +391,66 @@ def send_message(
     }
     
     db.messages.insert_one(msg_doc)
+
+    # Trigger chat message notification
+    if current_user["role"] == "admin":
+        create_notification(
+            db=db,
+            user_id=app_doc["user_id"],
+            title="💬 رسالة جديدة من الدعم الفني",
+            content=f"أرسل الدعم الفني رسالة جديدة بخصوص تطبيقك '{app_doc.get('title')}'.",
+            link=f"app_details.html?id={app_id}&tab=chat"
+        )
+    else:
+        create_notification(
+            db=db,
+            user_id=999,
+            title="💬 رسالة جديدة من مطور التطبيق",
+            content=f"أرسل المطور '{sender_name}' رسالة جديدة بخصوص التطبيق '{app_doc.get('title')}'.",
+            link=f"app_details.html?id={app_id}&tab=chat"
+        )
+
     return clean_doc(msg_doc)
+
+
+# ------------------ NOTIFICATIONS SYSTEM ------------------
+
+def create_notification(db: any, user_id: int, title: str, content: str, link: str):
+    notification_id = get_next_sequence_value("notification_id")
+    notif_doc = {
+        "id": notification_id,
+        "user_id": user_id,
+        "title": title,
+        "content": content,
+        "link": link,
+        "read": False,
+        "created_at": datetime.utcnow()
+    }
+    db.notifications.insert_one(notif_doc)
+    return notif_doc
+
+@router.get("/notifications/list", response_model=List[NotificationResponse])
+def list_notifications(db: any = Depends(get_db), current_user: dict = Depends(verify_jwt)):
+    target_user_id = 999 if current_user["role"] == "admin" else current_user["id"]
+    notifications = list(db.notifications.find({"user_id": target_user_id}).sort("id", -1))
+    return clean_docs(notifications)
+
+@router.put("/notifications/{notif_id}/read")
+def mark_notification_as_read(notif_id: int, db: any = Depends(get_db), current_user: dict = Depends(verify_jwt)):
+    target_user_id = 999 if current_user["role"] == "admin" else current_user["id"]
+    res = db.notifications.update_one(
+        {"id": notif_id, "user_id": target_user_id},
+        {"$set": {"read": True}}
+    )
+    if res.matched_count == 0:
+        raise HTTPException(status_code=404, detail="Notification not found")
+    return {"detail": "Notification marked as read"}
+
+@router.put("/notifications/read-all")
+def mark_all_notifications_as_read(db: any = Depends(get_db), current_user: dict = Depends(verify_jwt)):
+    target_user_id = 999 if current_user["role"] == "admin" else current_user["id"]
+    db.notifications.update_many(
+        {"user_id": target_user_id, "read": False},
+        {"$set": {"read": True}}
+    )
+    return {"detail": "All notifications marked as read"}

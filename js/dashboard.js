@@ -34,8 +34,51 @@ function initializeAuth() {
 }
 
 function toggleAuthMode() {
-    // Signup is disabled — accounts are created by invitation only
-    console.warn('Signup disabled: accounts are created by admin invitation only.');
+    const authTitle = document.getElementById('authTitle');
+    const authSubtitle = document.getElementById('authSubtitle');
+    const btnAuthSubmit = document.getElementById('btnAuthSubmit');
+    const authToggleText = document.getElementById('authToggleText');
+    const authToggleBtn = document.querySelector('.auth-toggle');
+
+    const groupAuthName = document.getElementById('groupAuthName');
+    const groupAuthPhone = document.getElementById('groupAuthPhone');
+    const groupAuthConfirmPassword = document.getElementById('groupAuthConfirmPassword');
+
+    const authName = document.getElementById('authName');
+    const authPhone = document.getElementById('authPhone');
+    const authConfirmPassword = document.getElementById('authConfirmPassword');
+
+    if (authMode === 'signin') {
+        authMode = 'signup';
+        if (authTitle) authTitle.textContent = "إنشاء حساب جديد";
+        if (authSubtitle) authSubtitle.textContent = "سجل بريدك الإلكتروني لتبدأ في رفع وإدارة تطبيقاتك";
+        if (btnAuthSubmit) btnAuthSubmit.textContent = "إنشاء حساب 🚀";
+        if (authToggleText) authToggleText.textContent = "لديك حساب بالفعل؟ ";
+        if (authToggleBtn) authToggleBtn.textContent = "تسجيل الدخول 🔑";
+
+        if (groupAuthName) groupAuthName.style.display = 'block';
+        if (groupAuthPhone) groupAuthPhone.style.display = 'block';
+        if (groupAuthConfirmPassword) groupAuthConfirmPassword.style.display = 'block';
+
+        if (authName) authName.required = true;
+        if (authPhone) authPhone.required = true;
+        if (authConfirmPassword) authConfirmPassword.required = true;
+    } else {
+        authMode = 'signin';
+        if (authTitle) authTitle.textContent = "تسجيل الدخول";
+        if (authSubtitle) authSubtitle.textContent = "يرجى تسجيل الدخول لمتابعة تطبيقاتك وإدارتها";
+        if (btnAuthSubmit) btnAuthSubmit.textContent = "تسجيل الدخول";
+        if (authToggleText) authToggleText.textContent = "ليس لديك حساب؟ ";
+        if (authToggleBtn) authToggleBtn.textContent = "إنشاء حساب جديد 🚀";
+
+        if (groupAuthName) groupAuthName.style.display = 'none';
+        if (groupAuthPhone) groupAuthPhone.style.display = 'none';
+        if (groupAuthConfirmPassword) groupAuthConfirmPassword.style.display = 'none';
+
+        if (authName) authName.required = false;
+        if (authPhone) authPhone.required = false;
+        if (authConfirmPassword) authConfirmPassword.required = false;
+    }
 }
 
 async function handleGoogleLoginClick() {
@@ -72,11 +115,30 @@ async function handleEmailAuth(event) {
     const submitBtn = document.getElementById('btnAuthSubmit');
     const originalBtnText = submitBtn.textContent;
     
+    let name = null;
+    let phone = null;
+    
+    if (authMode === 'signup') {
+        const authName = document.getElementById('authName').value.trim();
+        const authPhone = document.getElementById('authPhone').value.trim();
+        const authConfirmPassword = document.getElementById('authConfirmPassword').value;
+        
+        if (password !== authConfirmPassword) {
+            if (errorEl) {
+                errorEl.textContent = "خطأ: كلمتا المرور غير متطابقتين!";
+                errorEl.style.display = 'block';
+            }
+            return;
+        }
+        name = authName;
+        phone = authPhone;
+    }
+    
     submitBtn.textContent = 'جاري التحميل...';
     submitBtn.disabled = true;
     
     try {
-        const result = await AuthService.signInOrSignUpWithEmail(email, password, authMode);
+        const result = await AuthService.signInOrSignUpWithEmail(email, password, authMode, name, phone);
         AuthService.saveToken(result.accessToken);
         userToken = result.accessToken;
         
@@ -150,12 +212,18 @@ function showDashboard() {
     
     if (userEmailDisplay) {
         userEmailDisplay.textContent = email;
+        userEmailDisplay.title = email;
         userEmailDisplay.style.display = 'inline-block';
     }
     if (headerLogoutBtn) headerLogoutBtn.style.display = 'inline-block';
     if (headerOrderBtn) {
         headerOrderBtn.textContent = 'تقديم طلب نشر جديد';
         headerOrderBtn.href = 'order.html';
+    }
+
+    // Initialize notifications bell
+    if (typeof initNotifications === 'function') {
+        initNotifications();
     }
 
     loadUserOrders();

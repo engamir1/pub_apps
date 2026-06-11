@@ -21,7 +21,7 @@ from ..services.email_service import (
 from ..config import settings
 
 router = APIRouter(prefix="/api/orders", tags=["orders"])
-security = HTTPBearer()
+security = HTTPBearer(auto_error=False)
 
 def create_access_token(data: dict):
     to_encode = data.copy()
@@ -30,10 +30,21 @@ def create_access_token(data: dict):
     encoded_jwt = jwt.encode(to_encode, settings.JWT_SECRET, algorithm=settings.JWT_ALGORITHM)
     return encoded_jwt
 
-def verify_jwt(credentials: HTTPAuthorizationCredentials = Depends(security)):
-    token = credentials.credentials
+def verify_jwt(
+    token: Optional[str] = None,
+    credentials: Optional[HTTPAuthorizationCredentials] = Depends(security)
+):
+    actual_token = None
+    if credentials:
+        actual_token = credentials.credentials
+    elif token:
+        actual_token = token
+        
+    if not actual_token:
+        raise HTTPException(status_code=401, detail="Missing authorization token")
+        
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
+        payload = jwt.decode(actual_token, settings.JWT_SECRET, algorithms=[settings.JWT_ALGORITHM])
         user_id = payload.get("user_id")
         email = payload.get("email")
         role = payload.get("role")
@@ -258,6 +269,8 @@ def download_order_file(order_id: int, file_key: str, db: any = Depends(get_db),
 
 class GoogleLoginRequest(BaseModel):
     id_token: str
+    name: Optional[str] = None
+    phone: Optional[str] = None
 
 @router.post("/admin-login")
 def admin_login(payload: GoogleLoginRequest, db: any = Depends(get_db)):
@@ -277,7 +290,7 @@ def admin_login(payload: GoogleLoginRequest, db: any = Depends(get_db)):
             
         user_info = users[0]
         email = user_info.get("email")
-        name = user_info.get("displayName")
+        displayName = user_info.get("displayName")
         
         if not email:
             raise HTTPException(status_code=401, detail="Email not provided in token payload")
@@ -290,7 +303,8 @@ def admin_login(payload: GoogleLoginRequest, db: any = Depends(get_db)):
             user = {
                 "id": user_id,
                 "email": email,
-                "name": name,
+                "name": payload.name or displayName or email.split('@')[0],
+                "phone": payload.phone or "",
                 "role": role,
                 "created_at": datetime.utcnow()
             }
@@ -353,6 +367,26 @@ async def update_order_status(
         background_tasks.add_task(send_published_notification_email, order_dict)
         
     db.orders.update_one({"id": order_id}, {"$set": update_fields})
+    
+    # Trigger notification to user about status change
+    from .apps import create_notification
+    status_translations = {
+        "pending": "قيد المراجعة الفنية",
+        "published": "تم نشره بنجاح بالمتجر (بانتظار سداد الفاتورة)",
+        "paid": "نشط وتم سداد قيمته وتأكيدها بالكامل",
+        "deleted": "تم تعطيله وحذفه من المتجر"
+    }
+    status_disp = status_translations.get(new_status, new_status)
+    app_id = db_order.get("app_id")
+    notif_link = f"app_details.html?id={app_id}" if app_id else "dashboard.html"
+    create_notification(
+        db=db,
+        user_id=db_order["user_id"],
+        title="🔔 تحديث حالة طلب النشر",
+        content=f"تم تعديل حالة طلب النشر الخاص بتطبيقك '{db_order.get('app_title')}' (إصدار: {db_order.get('app_version', '1.0.0')}) إلى: {status_disp}.",
+        link=notif_link
+    )
+    
     db_order = db.orders.find_one({"id": order_id})
     return clean_doc(db_order)
 
@@ -367,7 +401,7 @@ def update_order_notes(
     db: any = Depends(get_db),
     current_user: dict = Depends(verify_jwt)
 ):
-    """Updates the admin notes/feedback for a specific order."""
+    """Updates the admin notes/feedback for a specific order and posts it to the support chat."""
     if current_user["role"] != "admin":
         raise HTTPException(status_code=403, detail="Only administrators can update notes")
         
@@ -375,7 +409,38 @@ def update_order_notes(
     if not db_order:
         raise HTTPException(status_code=404, detail="Order not found")
         
+    # Save notes to database
     db.orders.update_one({"id": order_id}, {"$set": {"admin_notes": payload.notes}})
+    
+    # Automatically post a system message to the support chat room
+    app_id = db_order.get("app_id")
+    if app_id and payload.notes:
+        message_id = get_next_sequence_value("message_id")
+        app_version = db_order.get("app_version", "1.0.0")
+        chat_content = f"✍️ [ملاحظة مراجعة للإصدار {app_version}]:\n{payload.notes}"
+        
+        msg_doc = {
+            "id": message_id,
+            "app_id": app_id,
+            "sender_id": current_user["id"],
+            "sender_name": "الدعم الفني (المشرف)",
+            "sender_role": "admin",
+            "content": chat_content,
+            "created_at": datetime.utcnow(),
+            "read_by_recipient": False
+        }
+        db.messages.insert_one(msg_doc)
+        
+        # Trigger notification to user about new review notes
+        from .apps import create_notification
+        create_notification(
+            db=db,
+            user_id=db_order["user_id"],
+            title="✍️ ملاحظة مراجعة جديدة",
+            content=f"ترك المشرف ملاحظات مراجعة وتوجيهات جديدة بخصوص طلبك للتطبيق '{db_order.get('app_title')}' (إصدار: {app_version}).",
+            link=f"app_details.html?id={app_id}"
+        )
+        
     db_order = db.orders.find_one({"id": order_id})
     return clean_doc(db_order)
 

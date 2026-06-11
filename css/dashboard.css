@@ -54,15 +54,6 @@
     color: var(--text-light);
 }
 
-.user-email-badge {
-    background-color: var(--card-bg);
-    border: 2px solid var(--border-color);
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: var(--text-dark);
-    font-weight: 800;
-    box-shadow: var(--shadow-flat-sm);
-}
 
 /* Orders list container */
 .orders-list {

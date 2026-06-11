@@ -44,15 +44,6 @@
     color: var(--text-light);
 }
 
-.user-email-badge {
-    background-color: var(--card-bg);
-    border: 2px solid var(--border-color);
-    padding: 6px 12px;
-    border-radius: 6px;
-    color: var(--text-dark);
-    font-weight: 800;
-    box-shadow: var(--shadow-flat-sm);
-}
 
 .table-card {
     margin-bottom: 40px;
@@ -659,4 +650,46 @@
     border-color: var(--border-color);
     color: var(--text-dark);
     box-shadow: 3px -3px 0px rgba(0, 0, 0, 0.05);
+}
+
+/* Financial Ledger Table Styling */
+.financial-table-wrapper {
+    background-color: var(--card-bg);
+    border: var(--border-main);
+    border-radius: 12px;
+    box-shadow: var(--shadow-flat);
+    overflow-x: auto;
+    margin-top: 10px;
+    width: 100%;
+}
+
+.financial-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: right;
+}
+
+.financial-table th {
+    background-color: #f1f5f9;
+    padding: 14px 16px;
+    font-weight: 800;
+    color: var(--text-dark);
+    border-bottom: 3px solid var(--border-color);
+    font-size: 0.95rem;
+}
+
+.financial-table td {
+    padding: 14px 16px;
+    border-bottom: 2px solid var(--border-color);
+    font-size: 0.9rem;
+    font-weight: 700;
+    vertical-align: middle;
+}
+
+.financial-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.financial-table tbody tr:hover {
+    background-color: #f8fafc;
 }

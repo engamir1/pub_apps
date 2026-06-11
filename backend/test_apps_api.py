@@ -116,6 +116,41 @@ def run_tests():
     for m in messages:
         print(f"  [{m['sender_name']}]: {m['content']}")
 
+    # CLEANUP TEST DATA (To stop polluting the admin dashboard)
+    print("\n[CLEANUP] Cleaning up test data from database and local storage...")
+    try:
+        cleanup_db = get_mongodb_client()
+        
+        # Delete app document
+        cleanup_db.apps.delete_one({"id": app_id})
+        print(f"Deleted test App ID {app_id} from database.")
+
+        # Delete all messages for this app
+        cleanup_db.messages.delete_many({"app_id": app_id})
+        print("Deleted support chat messages.")
+
+        # Find and delete all orders (versions) for this app and their uploads
+        test_orders = list(cleanup_db.orders.find({"app_id": app_id}))
+        for o in test_orders:
+            o_id = o.get("id")
+            cleanup_db.orders.delete_one({"id": o_id})
+            
+            # Remove local directory uploads/order_{o_id}
+            local_dir = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "uploads", f"order_{o_id}")
+            if os.path.exists(local_dir):
+                import shutil
+                shutil.rmtree(local_dir)
+                print(f"Removed local upload directory: {local_dir}")
+        print(f"Deleted {len(test_orders)} associated orders.")
+
+        # Delete all notifications linked to this app
+        cleanup_db.notifications.delete_many({"link": {"$regex": f"id={app_id}"}})
+        print("Deleted associated notifications.")
+
+        print("Cleanup completed successfully! ✨")
+    except Exception as cleanup_err:
+        print(f"Cleanup failed: {cleanup_err}")
+
     print("\n=========================================")
     print("  ALL API TESTS PASSED SUCCESSFULLY! 🎉 ")
     print("=========================================")

@@ -31,7 +31,7 @@
                 
                 <!-- Logged-in user elements (initially hidden, managed by js) -->
                 <span id="userEmailDisplay" class="user-email-badge" style="display: none; font-size: 0.9rem;"></span>
-                <a href="order.html" class="btn btn-primary nav-btn" id="headerOrderBtn">اطلب الخدمة الآن</a>
+                <a href="order.html" class="btn btn-primary nav-btn" id="headerOrderBtn" style="padding: 8px 18px; font-size: 0.95rem;">اطلب الخدمة الآن</a>
                 <button class="btn btn-secondary nav-btn" id="headerLogoutBtn" onclick="logout()" style="display: none; padding: 8px 18px; font-size: 0.95rem;">تسجيل الخروج</button>
             </nav>
         </div>
@@ -46,14 +46,34 @@
             
             <!-- Email & Password Form -->
             <form id="emailAuthForm" class="auth-form" onsubmit="handleEmailAuth(event)">
+                <!-- الاسم الكامل للمطور (يظهر فقط في وضع التسجيل) -->
+                <div class="auth-group" id="groupAuthName" style="display: none;">
+                    <label class="auth-label" for="authName">الاسم الكامل للمطور</label>
+                    <input type="text" id="authName" class="auth-input" placeholder="مثال: أحمد محمد">
+                </div>
+
                 <div class="auth-group">
                     <label class="auth-label" for="authEmail">البريد الإلكتروني</label>
                     <input type="email" id="authEmail" class="auth-input" placeholder="name@example.com" required>
                 </div>
+                
+                <!-- رقم الهاتف (يظهر فقط في وضع التسجيل) -->
+                <div class="auth-group" id="groupAuthPhone" style="display: none;">
+                    <label class="auth-label" for="authPhone">رقم الهاتف (مع رمز الدولة ويفضل واتساب)</label>
+                    <input type="tel" id="authPhone" class="auth-input" placeholder="مثال: +201234567890">
+                </div>
+
                 <div class="auth-group">
                     <label class="auth-label" for="authPassword">كلمة المرور</label>
                     <input type="password" id="authPassword" class="auth-input" placeholder="••••••••" required minlength="6">
                 </div>
+
+                <!-- تأكيد كلمة المرور (يظهر فقط في وضع التسجيل) -->
+                <div class="auth-group" id="groupAuthConfirmPassword" style="display: none;">
+                    <label class="auth-label" for="authConfirmPassword">تأكيد كلمة المرور</label>
+                    <input type="password" id="authConfirmPassword" class="auth-input" placeholder="••••••••" minlength="6">
+                </div>
+
                 <button type="submit" id="btnAuthSubmit" class="btn-auth-submit">تسجيل الدخول</button>
             </form>
 
@@ -65,8 +85,9 @@
             
             <div id="loginError" style="margin-top: 15px; display: none;" class="error-message"></div>
 
-            <p class="auth-toggle-wrapper" style="text-align: center; color: var(--text-light); font-size: 0.85rem; margin-top: 15px; font-weight: 600;">
-                🔒 التسجيل متاح عبر دعوة مباشرة من فريق العمل فقط.
+            <p class="auth-toggle-wrapper" style="text-align: center; margin-top: 20px;">
+                <span id="authToggleText">ليس لديك حساب؟ </span>
+                <span class="auth-toggle" onclick="toggleAuthMode()">إنشاء حساب جديد 🚀</span>
             </p>
         </div>
     </div>

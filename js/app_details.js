@@ -69,6 +69,7 @@ function setupHeaderUserInfo() {
         
         if (userEmailDisplay && email) {
             userEmailDisplay.textContent = email;
+            userEmailDisplay.title = email;
             userEmailDisplay.style.display = 'inline-block';
         }
         if (headerLogoutBtn) headerLogoutBtn.style.display = 'inline-block';
@@ -370,6 +371,59 @@ function renderVersionsList(versions) {
                     </div>
                 `;
             }
+
+            // Show payment invoice card to the developer/user
+            if (loggedInRole !== 'admin') {
+                const waMessage = `مرحباً، قمت بتحويل مبلغ ${order.total_price} ج.م لتطبيق "${appData.app.title}" إصدار ${order.app_version || '1.0.0'} (طلب #${order.id})`;
+                const waLink = `https://wa.me/201507890092?text=${encodeURIComponent(waMessage)}`;
+                
+                deadlineHtml += `
+                    <div class="payment-invoice-card">
+                        <div class="invoice-header">
+                            <span>💳</span>
+                            <span>فاتورة سداد مستحقة الرسوم</span>
+                        </div>
+                        
+                        <div class="invoice-details">
+                            <div class="invoice-detail-row">
+                                <span>اسم التطبيق:</span>
+                                <span style="color: var(--text-dark);">${appData.app.title}</span>
+                            </div>
+                            <div class="invoice-detail-row">
+                                <span>إصدار التطبيق:</span>
+                                <span style="color: var(--text-dark);">${order.app_version || '1.0.0'}</span>
+                            </div>
+                            <div class="invoice-detail-row">
+                                <span>رقم الطلب (ID):</span>
+                                <span style="color: var(--text-dark);">#${order.id}</span>
+                            </div>
+                            <div class="invoice-detail-row total">
+                                <span>المبلغ المطلوب سداده:</span>
+                                <span style="font-weight: 800; color: #065f46;">${order.total_price} ج.م</span>
+                            </div>
+                        </div>
+                        
+                        <div class="instapay-info-box">
+                            <div class="instapay-info-title">📍 معلومات تحويل InstaPay:</div>
+                            <ul class="instapay-info-list">
+                                <li class="instapay-info-item">
+                                    <span>العنوان (Address):</span>
+                                    <span class="instapay-value">cedratech@instapay</span>
+                                </li>
+                                <li class="instapay-info-item">
+                                    <span>رقم الهاتف (Mobile):</span>
+                                    <span class="instapay-value">01507890092</span>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <a href="${waLink}" target="_blank" class="btn btn-whatsapp-payment" style="display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; text-decoration: none; padding: 12px;">
+                            <span>💬</span>
+                            <span>تأكيد الدفع وإرسال التحويل (واتساب)</span>
+                        </a>
+                    </div>
+                `;
+            }
         } else if (order.status === 'paid') {
             statusBadge = '<span class="badge-status badge-paid">تم السداد ونشط بالمتجر</span>';
         } else if (order.status === 'deleted') {
@@ -489,8 +543,8 @@ function renderVersionsList(versions) {
         let downloadButton = '';
         if (order.aab_path) {
             downloadButton = `
-                <button class="btn btn-secondary nav-btn" style="padding: 6px 12px; font-size:0.8rem; background-color: #f1f5f9;" onclick="downloadAABFile(${order.id})">
-                    📥 تحميل حزمة الـ AAB
+                <button class="btn" style="padding: 6px 12px; font-size: 0.8rem; background-color: #f1f5f9; color: var(--text-dark);" onclick="downloadAABFile(${order.id})">
+                    📥 تحميل الـ AAB
                 </button>
             `;
         }
@@ -514,7 +568,7 @@ function renderVersionsList(versions) {
                 adminActionsHtml = `
                     <div style="display: flex; gap: 5px;">
                         <button onclick="updateVersionStatus(${order.id}, 'paid')" style="background-color: var(--success); color: white; border: 2px solid var(--border-color); border-radius: 6px; padding: 4px 10px; font-weight: 800; font-size: 0.75rem; cursor: pointer; font-family: inherit;">
-                            💸 تأكيد استلاف الدفع
+                            💸 تأكيد استلام المبلغ
                         </button>
                         <button onclick="updateVersionStatus(${order.id}, 'deleted')" style="background-color: #ef4444; color: white; border: 2px solid var(--border-color); border-radius: 6px; padding: 4px 10px; font-weight: 800; font-size: 0.75rem; cursor: pointer; font-family: inherit;">
                             🛑 تعطيل التحديث
@@ -554,8 +608,9 @@ function renderVersionsList(versions) {
                     <span class="meta-label">معرف الإصدار (ID)</span>
                     <span class="meta-value" style="font-size: 0.9rem;">#${order.id}</span>
                 </div>
-                <div class="meta-item" style="justify-content: center; align-items: flex-start;">
-                    ${downloadButton}
+                <div class="meta-item">
+                    <span class="meta-label">حزمة التطبيق</span>
+                    <span class="meta-value">${downloadButton || '<span style="color: var(--text-light); font-size: 0.85rem;">غير مرفوعة</span>'}</span>
                 </div>
             </div>
 
@@ -571,33 +626,8 @@ function renderVersionsList(versions) {
 
 // Download AAB with Authorization Token
 function downloadAABFile(orderId) {
-    const url = `${API_BASE}/api/orders/${orderId}/download/aab`;
-    
-    fetch(url, {
-        headers: { 'Authorization': `Bearer ${userToken}` }
-    })
-    .then(res => {
-        if (res.status === 401 || res.status === 403) {
-            logout();
-            return;
-        }
-        if (!res.ok) throw new Error("فشل في تحميل حزمة التطبيق");
-        return res.blob();
-    })
-    .then(blob => {
-        if (!blob) return;
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = downloadUrl;
-        a.download = 'app_bundle.aab';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-    })
-    .catch(err => {
-        console.error(err);
-        alert("حدث خطأ أثناء تحميل ملف الـ AAB.");
-    });
+    const url = `${API_BASE}/api/orders/${orderId}/download/aab?token=${encodeURIComponent(userToken)}`;
+    window.open(url, '_blank');
 }
 
 // Delete a pending version

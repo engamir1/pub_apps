@@ -301,3 +301,84 @@ def send_payment_reminder_email(order_data: dict):
     except Exception as e:
         logger.error(f"Failed to send payment reminder email: {e}")
 
+def send_notes_notification_email(order_data: dict, notes: str):
+    """Sends an email to the developer with the reviewer's notes/feedback on their version."""
+    recipient_email = order_data.get('dev_email')
+    app_title = order_data.get('app_title')
+    dev_name = order_data.get('dev_name')
+    app_version = order_data.get('app_version', '1.0.0')
+
+    if not settings.SMTP_USER or not settings.SMTP_PASSWORD:
+        logger.warning("SMTP credentials not configured. Notes notification email skipped.")
+        try:
+            print("==================================================")
+            print("       MOCK EMAIL VERSION NOTES NOTIFICATION      ")
+            print("==================================================")
+            print(f"To: {recipient_email}")
+            print(f"Subject: ملاحظات مراجعة هامة لتطبيقك \"{app_title}\" (إصدار: {app_version})")
+            print(f"Notes: {notes}")
+            print("==================================================")
+        except UnicodeEncodeError:
+            print("==================================================")
+            print("       MOCK EMAIL VERSION NOTES NOTIFICATION      ")
+            print("==================================================")
+            print(f"To: {recipient_email}")
+            print(f"Subject: [Notes Alert] {ascii(app_title)} (Version: {app_version})")
+            print(f"Notes: {ascii(notes)}")
+            print("==================================================")
+        return
+
+    try:
+        msg = MIMEMultipart("alternative")
+        msg["Subject"] = f"ملاحظات مراجعة هامة لتطبيقك \"{app_title}\" (إصدار: {app_version}) ⚠️"
+        msg["From"] = settings.SMTP_USER
+        msg["To"] = recipient_email
+
+        html = f"""
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <style>
+            body {{ font-family: Arial, sans-serif; direction: rtl; text-align: right; line-height: 1.6; color: #1e293b; }}
+            .container {{ padding: 20px; border: 2px solid #1e293b; border-radius: 12px; max-width: 600px; margin: 0 auto; box-shadow: 4px 4px 0px #1e293b; background-color: #f8fafc; }}
+            .header {{ background-color: #f59e0b; color: white; padding: 20px; border: 2px solid #1e293b; border-radius: 8px; text-align: center; margin-bottom: 20px; box-shadow: 3px 3px 0px #1e293b; }}
+            .header h2 {{ margin: 0; font-size: 1.5rem; }}
+            .content {{ padding: 10px; }}
+            .notes-card {{ background-color: #fffbeb; border: 2px dashed #f59e0b; border-radius: 8px; padding: 15px; margin: 20px 0; }}
+            .notes-text {{ font-size: 1.1rem; color: #1e293b; white-space: pre-line; }}
+            .footer {{ font-size: 0.9rem; color: #64748b; text-align: center; margin-top: 20px; }}
+          </style>
+        </head>
+        <body>
+          <div class="container">
+            <div class="header">
+              <h2>ملاحظات وتوجيهات مراجعة التطبيق ✍️</h2>
+            </div>
+            <div class="content">
+              <p>مرحباً <strong>{dev_name}</strong>،</p>
+              <p>قام مراجع الحساب بمراجعة الإصدار رقم (<strong>{app_version}</strong>) لتطبيقك <strong>"{app_title}"</strong> وترك لك الملاحظات التالية:</p>
+              
+              <div class="notes-card">
+                <div class="notes-text">{notes}</div>
+              </div>
+              
+              <p>يرجى قراءة الملاحظات بدقة واتخاذ الإجراءات المطلوبة، ثم الرد على المشرف عبر شات الدعم الفني الخاص بالتطبيق في لوحة التحكم.</p>
+            </div>
+            <div class="footer">
+              <p>شكراً لكم.</p>
+            </div>
+          </div>
+        </body>
+        </html>
+        """
+        msg.attach(MIMEText(html, "html", "utf-8"))
+
+        with smtplib.SMTP(settings.SMTP_HOST, settings.SMTP_PORT) as server:
+            server.starttls()
+            server.login(settings.SMTP_USER, settings.SMTP_PASSWORD)
+            server.sendmail(settings.SMTP_USER, recipient_email, msg.as_string())
+        
+        logger.info("Notes notification email sent successfully.")
+    except Exception as e:
+        logger.error(f"Failed to send notes notification email: {e}")
+

@@ -1,6 +1,19 @@
 from pymongo import MongoClient, ReturnDocument
 from .config import settings
 
+# Configure dnspython resolver to be resilient against stale DNS servers (e.g., on Windows)
+try:
+    import dns.resolver
+    resolver = dns.resolver.Resolver()
+    # Prepend public DNS resolvers to ensure fast lookup if available
+    resolver.nameservers = ['8.8.8.8', '1.1.1.1'] + resolver.nameservers
+    # Set short individual query timeout and reasonable overall lifetime
+    resolver.timeout = 1.0
+    resolver.lifetime = 10.0
+    dns.resolver.default_resolver = resolver
+except Exception:
+    pass
+
 client = None
 db = None
 

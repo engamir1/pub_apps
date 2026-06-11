@@ -104,3 +104,16 @@ class MessageResponse(BaseModel):
     class Config:
         from_attributes = True
 
+
+class NotificationResponse(BaseModel):
+    id: int
+    user_id: int
+    title: str
+    content: str
+    link: str
+    read: bool
+    created_at: datetime
+
+    class Config:
+        from_attributes = True
+

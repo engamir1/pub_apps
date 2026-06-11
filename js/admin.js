@@ -128,9 +128,15 @@ function showDashboard() {
     const headerLogoutBtn = document.getElementById('headerLogoutBtn');
     if (userEmailDisplay) {
         userEmailDisplay.textContent = email;
+        userEmailDisplay.title = email;
         userEmailDisplay.style.display = 'inline-block';
     }
     if (headerLogoutBtn) headerLogoutBtn.style.display = 'inline-block';
+
+    // Initialize notifications bell
+    if (typeof initNotifications === 'function') {
+        initNotifications();
+    }
 
     loadOrders();
 }
@@ -183,20 +189,12 @@ async function loadOrders() {
         if (!res.ok) throw new Error("فشل جلب قائمة الطلبات");
 
         allOrders = await res.json();
-        
-        if (allOrders.length === 0) {
-            statusEl.innerHTML = '<div style="padding: 2rem;">لا توجد طلبات نشر حالية.</div>';
-            return;
-        }
-
+        renderActiveTab();
         statusEl.style.display = 'none';
         containerEl.style.display = 'block';
-
-        renderActiveTab();
-
     } catch (err) {
         console.error(err);
-        statusEl.innerHTML = `<div class="error-message" style="padding: 2rem;">حدث خطأ: ${err.message}</div>`;
+        statusEl.textContent = "حدث خطأ أثناء تحميل الطلبات: " + err.message;
     }
 }
 
@@ -232,11 +230,12 @@ function renderActiveTab() {
         return;
     }
 
-    // Prepend financial overview cards if payments tab is selected
+    // 💸 Payments Tab layout (Financial ledger)
     if (activeAdminTab === 'payments') {
         const totalRevenue = filteredOrders.reduce((sum, o) => sum + (o.total_price || 0), 0);
         const totalCount = filteredOrders.length;
 
+        // Render summary cards at the top
         const summaryCard = document.createElement('div');
         summaryCard.style.gridColumn = '1 / -1';
         summaryCard.style.display = 'grid';
@@ -255,8 +254,78 @@ function renderActiveTab() {
             </div>
         `;
         bodyEl.appendChild(summaryCard);
+
+        // Render clean, specialized financial table
+        const tableWrapper = document.createElement('div');
+        tableWrapper.className = 'financial-table-wrapper';
+        tableWrapper.style.gridColumn = '1 / -1';
+        
+        let tableRows = '';
+        filteredOrders.forEach(order => {
+            const date = new Date(order.created_at);
+            const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
+            
+            const payDate = new Date(order.paid_at || order.updated_at);
+            const formattedPayDate = payDate.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+            
+            let planDisp = order.plan_selection;
+            if (order.plan_selection === 'basic') planDisp = 'الباقة الأساسية';
+            else if (order.plan_selection === 'pro') planDisp = 'الباقة الاحترافية';
+            else if (order.plan_selection === 'lifetime') planDisp = 'باقة مدى الحياة';
+            else if (order.plan_selection === 'update') planDisp = 'تحديث إصدار 🚀';
+
+            tableRows += `
+                <tr>
+                    <td>#${order.id}</td>
+                    <td>${formattedPayDate}</td>
+                    <td>
+                        <div><strong>${order.dev_name}</strong></div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">${order.dev_phone}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">${order.dev_email}</div>
+                    </td>
+                    <td>
+                        <div><strong>${order.app_title}</strong></div>
+                        <div style="font-size: 0.8rem; color: var(--text-light);">نسخة: ${order.app_version || '1.0.0'}</div>
+                    </td>
+                    <td><span class="app-plan-badge" style="margin: 0;">${planDisp}</span></td>
+                    <td><strong style="color: var(--text-dark); font-size: 1.05rem;">${order.total_price} ج.م</strong></td>
+                    <td><span class="badge-status badge-paid" style="padding: 2px 8px; font-size: 0.75rem; box-shadow: 1px 1px 0px var(--border-color);">تم التحصيل</span></td>
+                    <td>
+                        <div style="display: flex; gap: 5px;">
+                            ${order.app_id ? `
+                                <a href="app_details.html?id=${order.app_id}" class="btn-file" style="margin: 0; padding: 4px 8px;" target="_blank">🔍 التفاصيل والسجل</a>
+                                <button class="btn-file" style="margin: 0; padding: 4px 8px; background-color: var(--primary); color: white; border-color: var(--primary);" onclick="openAdminChat(${order.app_id}, '${order.app_title.replace(/'/g, "\\'")}')">💬 شات</button>
+                            ` : '<span style="color: var(--text-light); font-size: 0.8rem;">لا يوجد تطبيق</span>'}
+                        </div>
+                    </td>
+                </tr>
+            `;
+        });
+
+        tableWrapper.innerHTML = `
+            <table class="financial-table">
+                <thead>
+                    <tr>
+                        <th>رقم العملية</th>
+                        <th>تاريخ السداد المؤكد</th>
+                        <th>المطور / العميل</th>
+                        <th>التطبيق والنسخة</th>
+                        <th>الباقة</th>
+                        <th>المبلغ</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRows}
+                </tbody>
+            </table>
+        `;
+        bodyEl.appendChild(tableWrapper);
+        return;
     }
 
+    // 📋 Requests Tab layout (Full side-by-side cards)
     filteredOrders.forEach(order => {
         const card = document.createElement('div');
         card.className = 'order-card';
@@ -264,14 +333,6 @@ function renderActiveTab() {
         // Format date
         const date = new Date(order.created_at);
         const formattedDate = date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric' });
-
-        // Payment date (if paid)
-        let paymentDateHtml = '';
-        if (order.status === 'paid' && (order.paid_at || order.updated_at)) {
-            const payDate = new Date(order.paid_at || order.updated_at);
-            const formattedPayDate = payDate.toLocaleDateString('ar-EG', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
-            paymentDateHtml = `<div style="font-size: 0.85rem; color: var(--accent-green); font-weight: 800; margin-top: 5px;">📅 تأكيد الدفع: ${formattedPayDate}</div>`;
-        }
 
         // Status badge
         let statusBadge = '';
@@ -293,8 +354,6 @@ function renderActiveTab() {
             } else {
                 deadlineHtml = `<span class="deadline-text deadline-overdue">متأخر عن السداد! ⚠️</span>`;
             }
-        } else if (order.status === 'paid') {
-            statusBadge = '<span class="badge-status badge-paid">تم السداد بنجاح</span>';
         } else if (order.status === 'deleted') {
             statusBadge = '<span class="badge-status badge-deleted">تم حذف التطبيق</span>';
         }
@@ -361,7 +420,6 @@ function renderActiveTab() {
                 <div class="status-deadline-box">
                     ${statusBadge}
                     ${deadlineHtml}
-                    ${paymentDateHtml}
                 </div>
             </div>
 
@@ -386,8 +444,8 @@ function renderActiveTab() {
                             <a href="https://wa.me/${order.dev_phone.replace(/[+\s]/g, '')}" target="_blank" class="contact-btn contact-whatsapp" title="تواصل عبر واتساب">
                                 💬 واتساب
                             </a>
-                            <a href="mailto:${order.dev_email}" class="contact-btn contact-email" title="تراسل بالبريد">
-                                ✉️ البريد الإلكتروني
+                            <a href="mailto:${order.dev_email}" class="contact-btn contact-email" title="تراسل بالبريد: ${order.dev_email}">
+                                ✉️ ${order.dev_email}
                             </a>
                             <a href="tel:${order.dev_phone}" class="contact-btn contact-phone" title="اتصال هاتفي">
                                 📞 ${order.dev_phone}
@@ -427,7 +485,7 @@ function renderActiveTab() {
                     <div class="secondary-actions">
                         ${order.app_id ? `
                             <a href="app_details.html?id=${order.app_id}" class="btn-action btn-details" target="_blank">
-                                📱 تفاصيل التطبيق
+                                📱 التفاصيل
                             </a>
                             <button class="btn-action btn-chat" onclick="openAdminChat(${order.app_id}, '${order.app_title.replace(/'/g, "\\'")}')">
                                 💬 شات الدعم
